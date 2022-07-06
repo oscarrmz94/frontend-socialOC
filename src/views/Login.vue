@@ -1,4 +1,3 @@
-import service_auth from '@/services/auth';
 <template>
   <div class="d-flex justify-content-center flex-wrap">
     <b-card

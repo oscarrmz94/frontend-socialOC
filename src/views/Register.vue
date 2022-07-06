@@ -28,14 +28,10 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-3" label="Birthday:" label-for="input-3">
-        <b-form-input
-          id="input-3"
-          v-model="form.date_birthday"
-          placeholder="Enter birthday"
-          required
-        ></b-form-input>
+      <b-form-group id="input-group-2" label="Cumpleaños:" label-for="input-2">
+        <b-form-datepicker id="example-datepicker" v-model="form.date_birth" class="mb-2"></b-form-datepicker>
       </b-form-group>
+
       
       <b-form-group id="input-group-4" label="Nickname:" label-for="input-4">
         <b-form-input
