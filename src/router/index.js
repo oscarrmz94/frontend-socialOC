@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import store from '@/store/index'
 
 Vue.use(VueRouter)
 
@@ -27,6 +26,11 @@ const routes = [
     name: 'Register',
     component: () => import('../views/Register.vue')
   },
+  // {
+  //   path: '/:pathMatch(.*)?',
+  //   name: 'NotFound',
+  //   component: () => import('../views/404.vue')
+  // },
 ]
 
 const router = new VueRouter({
@@ -36,10 +40,13 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const authentication = to.matched.some(item => item.meta.need_authentication)
-  console.log(store.state.token)
-  if (authentication && store.state.token === null) {
+  console.log(localStorage.getItem('token') === null)
+  if (authentication && localStorage.getItem('token') === null) {
+    console.log('he entrado en el primero')
+
     next({name: 'Login'})
   } else {
+
     next()
   }
 })

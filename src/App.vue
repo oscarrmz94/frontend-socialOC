@@ -3,7 +3,7 @@
   <div id="app">
     <div id="nav">
 
-      <header class="mb-5"> 
+      <header class="mb-5" v-if="($route.path.split('/')[1] !== 'login') && ($route.path.split('/')[1] !== 'register')"> 
         <!-- UN COMPONENTE DONDE IRA NUESTRO NAVBAR -->
           <router-link class="link" :to="{name: 'Home'}">home</router-link> |
           <router-link class="link mb-5" :to="{name: 'About'}">about</router-link> |
@@ -27,7 +27,10 @@ import { mapActions } from 'vuex';
 
 export default {
   methods: {
-    ...mapActions(['logout']),
+    ...mapActions(['logout', 'readToken']),
+  },
+  created() {
+    this.readToken();
   }
 }
 </script>
