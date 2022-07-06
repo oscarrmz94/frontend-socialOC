@@ -66,14 +66,15 @@
         ></b-form-input>
       </b-form-group>
 
-      <!-- <b-form-group id="input-group-7" label="Password:" label-for="input-7">
+      <b-form-group id="input-group-7" label="Password:" label-for="input-7">
         <b-form-input
           id="input-7"
           v-model="form.password"
           placeholder="Enter Password"
           required
+          type="password"
         ></b-form-input>
-      </b-form-group> -->
+      </b-form-group>
 
       <b-button type="submit" variant="outline-warning">Submit</b-button>
       <b-button type="reset" variant="outline-secondary">Reset</b-button>
@@ -84,26 +85,33 @@
 </template>
 
 <script>
+  import service_auth from '@/services/auth'
+
   export default {
     data() {
       return {
         form: {
-          email: '',
-          name: '',
-          date_birthday:'',
-          lastname:'',
-          nickname:'',
-          password:'',
-          gender: null,
+          email: 'test@test.com',
+          name: 'test',
+          date_birth:'0',
+          lastname:'test',
+          nickname:'test nick',
+          password:'Pass2018#',
+          gender: 'Female',
         },
-        gender: [{ text: 'Select One', value: null }, 'Female', 'Masculine'],
+        gender: [{ text: 'Select One', value: 'male' }, 'Female', 'Masculine'],
         show: true
       }
     },
     methods: {
       onSubmit(event) {
         event.preventDefault()
-        alert(JSON.stringify(this.form))
+
+        service_auth.register(this.form).then((response) => {
+
+          
+          console.log(response);
+        })
       },
       onReset(event) {
         event.preventDefault()

@@ -1,3 +1,4 @@
+import service_auth from '@/services/auth';
 <template>
   <div class="d-flex justify-content-center flex-wrap">
     <b-card
@@ -9,7 +10,7 @@
 
     >
      <div>
-        <form>
+        <form @submit="onSubmit">
             <h3>Sign In</h3>
             <div class="form-group">
                 <label>Email address</label>
@@ -37,9 +38,34 @@
 </template>
 
 <script>
+import service_auth from '@/services/auth'
+import { mapActions } from 'vuex';
+
 export default {
-  name: 'Home',
-  components: {
+  data() {
+    return {
+      user: {
+        email: 'chino@chino1.com',
+        password: 'Pass2018#'
+      }
+    }
+  },
+  
+  methods: {
+    ...mapActions(['settingToken']),
+
+    onSubmit(event) {
+      event.preventDefault();
+      
+      service_auth.login(this.user).then((response) => {
+        if (response.error === null) {
+
+          // MONSTRAR UNA NOTIFICACION DE QUE HA INICIADO CON EXITO
+          this.settingToken(response.data.token)
+          this.$router.push({name: 'Home'});
+        }
+      })
+    }
   }
 }
 </script>

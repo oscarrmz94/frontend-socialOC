@@ -2,13 +2,35 @@
 <body class="body">
   <div id="app">
     <div id="nav">
-      <router-link class="link" :to="{name: 'Login'}">Login</router-link> |
-      <router-link class="link" :to="{name: 'Register'}">Register</router-link>
+
+      <header class="mb-5"> 
+        <!-- UN COMPONENTE DONDE IRA NUESTRO NAVBAR -->
+          <router-link class="link" :to="{name: 'Home'}">home</router-link> |
+          <router-link class="link mb-5" :to="{name: 'About'}">about</router-link> |
+          <button class="link mb-5" @click="logout">Cerrar sesion</button> 
+
+      </header>
+      
+      <!-- CONTENEDOR PRINCIPAL -->
+      <router-view/>
+
+      <footer>
+        <!-- UN COMPONENTE DONDE IRA NUESTRO FOOTER -->
+
+      </footer>
     </div>
-    <router-view/>
   </div>
 </body>
 </template>
+<script>
+import { mapActions } from 'vuex';
+
+export default {
+  methods: {
+    ...mapActions(['logout']),
+  }
+}
+</script>
 
 <style>
 .body{
