@@ -14,23 +14,22 @@ import service_auth from '@/services/auth';
             <h3>Sign In</h3>
             <div class="form-group">
                 <label>Email address</label>
-                <input type="email"  placeholder="Email" class="form-control" />
+                <input type="email"  placeholder="Email" class="form-control" v-model="user.email"/>
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" placeholder="Password" class="form-control" />
+                <input type="password" placeholder="Password" class="form-control" v-model="user.password"/>
             </div>
             <button type="submit" class="btn btn-outline-warning m-2">Sign In</button>
             <p class="forgot-password text-right mt-2 mb-4">
                 <router-link class="link" to="/forgot-password">Forgot password ?</router-link>
             </p>
-            <!-- <div class="social-icons">
-                <ul>
-                    <li><a href="#"><i class="fa fa-google"></i></a></li>
-                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                </ul>
-            </div> -->
+                <b-icon icon="exclamation-circle-fill" variant="success" class="h1"/>
+                <b-icon icon="alarm" class="h1"/>
+                <b-icon icon="camera" class="h1"/>
+                <b-icon icon="heart" class="h1"/>
+                <b-icon icon="info-lg" class="h1"/>
+                <b-icon icon="lock" class="h1"/>
         </form>
     </div>
     </b-card>
