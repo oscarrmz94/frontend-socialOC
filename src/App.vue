@@ -1,14 +1,21 @@
 <template>
+<body class="body">
   <div id="app">
     <div id="nav">
-      <router-link :to="{name: 'Home'}">Home</router-link> |
-      <router-link :to="{name: 'About'}">About</router-link>
+      <router-link class="link" :to="{name: 'Login'}">Login</router-link> |
+      <router-link class="link" :to="{name: 'Register'}">Register</router-link>
     </div>
     <router-view/>
   </div>
+</body>
 </template>
 
 <style>
+.body{
+  background-color: #000000;
+  height: 100vh;
+  width: 100vw;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -23,10 +30,13 @@
 
 #nav a {
   font-weight: bold;
-  color: #2c3e50;
+  color: white;
 }
 
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: #f3a310;
+}
+.link{
+    text-decoration-line: none;
 }
 </style>
