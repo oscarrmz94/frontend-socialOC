@@ -11,9 +11,9 @@ const routes = [
     meta: {need_authentication: true}
   },
   {
-    path: '/about',
-    name: 'About',
-    component: () => import('../views/About.vue'),
+    path: '/message',
+    name: 'Message',
+    component: () => import('../views/Message.vue'),
     meta: {need_authentication: true}
   },
   {
@@ -26,6 +26,16 @@ const routes = [
     name: 'Register',
     component: () => import('../views/Register.vue')
   },
+  {
+  path: '/toshare',
+  name: 'ToShare',
+  component: () => import('../views/Toshare.vue')
+  },
+  {
+    path: '/notification',
+    name: 'Notification',
+    component: () => import('../views/Notification.vue')
+    },
   // {
   //   path: '/:pathMatch(.*)?',
   //   name: 'NotFound',
