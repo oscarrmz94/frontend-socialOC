@@ -20,7 +20,7 @@
           :invalid-feedback="invalidEmail"
           :state="state"
           >
-          <b-icon v-if="user.email == 'chino@chino1.com'"  class="icon" icon="envelope-open" variant="warning"/>
+          <b-icon v-if="user.email.length >= 8"  class="icon" icon="envelope" animation="throb" variant="warning"/>
           <b-icon v-else class="icon" icon="envelope" variant="warning"/>
           <label>Email Address:</label>
         <b-form-input
@@ -38,7 +38,7 @@
           :state="state_Password"
           :invalid-feedback="invalidPassword"
           >
-          <b-icon v-if="user.password =='Pass2018#'" class="icon" icon="unlock" variant="warning"/>
+          <b-icon v-if="user.password.length >= 8" class="icon" icon="lock" animation="throb" variant="warning"/>
           <b-icon v-else class="icon" icon="lock" variant="warning"/>
           <label>Password:</label>
         <b-form-input
@@ -67,11 +67,11 @@ import { mapActions } from 'vuex';
 export default {
     computed: {
       state() {
-        return this.user.email =='chino@chino1.com'
+        return this.user.email.length >= 4
       },
       invalidEmail() {
         if (this.user.email.length > 0) {
-          return 'Escribe un correo valido.'
+          return 'Escribe al menos 4 caracteres.'
         }
         return 'Este campo es obligatorio.'
       },
