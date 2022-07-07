@@ -10,16 +10,27 @@
      <div >
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
 
-      <b-form-group id="input-group-1" label="Name:" label-for="input-1">
+      <b-form-group
+          id="input-group-1"  
+          label-for="input-1"
+           valid-feedback="Correo valido"
+          :invalid-feedback="invalidEmail"
+          :state="state">
+          <b-icon class="icon" icon="person-fill" variant="warning"/>
+          <label>Name:</label>
         <b-form-input
           id="input-1"
           v-model="form.name"
           placeholder="Enter Name"
-          required
+           :state="state"
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-2" label="Lastname:" label-for="input-2">
+      <b-form-group 
+          id="input-group-2"  
+          label-for="input-2">
+          <b-icon class="icon" icon="person-badge" variant="warning"/>
+          <label>Lastname:</label>
         <b-form-input
           id="input-2"
           v-model="form.lastname"
@@ -28,12 +39,24 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-2" label="Cumpleaños:" label-for="input-2">
-        <b-form-datepicker id="example-datepicker" v-model="form.date_birth" class="mb-2"></b-form-datepicker>
+      <b-form-group 
+          id="input-group-2"  
+          label-for="input-2">
+          <b-icon class="icon" icon="gift" variant="warning"/>
+          <label>Birthday:</label>
+        <b-form-datepicker 
+          id="example-datepicker" 
+          v-model="form.date_birth" 
+          class="mb-2">
+          </b-form-datepicker>
       </b-form-group>
 
       
-      <b-form-group id="input-group-4" label="Nickname:" label-for="input-4">
+      <b-form-group 
+            id="input-group-4" 
+            label-for="input-4">
+            <b-icon class="icon" icon="joystick" variant="warning"/>
+            <label>Nickname:</label>
         <b-form-input
           id="input-4"
           v-model="form.nickname"
@@ -42,7 +65,11 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-5" label="Gender:" label-for="input-5">
+      <b-form-group 
+          id="input-group-5" 
+          label-for="input-5">
+          <b-icon class="icon" icon="gender-ambiguous" variant="warning"/>
+          <label>Gender:</label>
         <b-form-select
           class="form-control"
           id="input-5"
@@ -53,16 +80,25 @@
         ></b-form-select>
       </b-form-group>
       
-      <b-form-group id="input-group-6" label="Email:" label-for="input-6">
+      <b-form-group 
+          id="input-group-6"
+           label-for="input-6">
+           <b-icon class="icon" icon="envelope" variant="warning"/>
+          <label>Email:</label>
         <b-form-input
           id="input-6"
           v-model="form.email"
           placeholder="Enter Email"
           required
-        ></b-form-input>
+        >
+        </b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-7" label="Password:" label-for="input-7">
+      <b-form-group 
+          id="input-group-7" 
+          label-for="input-7">
+          <b-icon class="icon" icon="lock" variant="warning"/>
+          <label>Password:</label>
         <b-form-input
           id="input-7"
           v-model="form.password"
@@ -99,6 +135,17 @@
         show: true
       }
     },
+     computed: {
+      state() {
+        return this.form.name.length >= 4 
+      },
+      invalidEmail() {
+        if (this.form.name.length > 0) {
+          return 'Escribe al menos 4 caracteres.'
+        }
+        return 'Este campo es obligatorio.'
+      },
+     },
     methods: {
       onSubmit(event) {
         event.preventDefault()
@@ -125,11 +172,15 @@
           this.show = true
         })
       }
-    }
+    },
   }
 </script>
 <style>
 .btn{
     margin: 10px;
+}
+.icon{
+  margin-right: 8px;
+  margin-top: 10px;
 }
 </style>
