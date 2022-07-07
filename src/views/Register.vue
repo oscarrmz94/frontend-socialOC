@@ -114,8 +114,11 @@
         // Reset our form values
         this.form.email = ''
         this.form.name = ''
+        this.form.date_birth = ''
+        this.form.lastname = ''
+        this.form.nickname =''
+        this.form.password =''
         this.form.gender = null
-        this.form.checked = []
         // Trick to reset/clear native browser form validation state
         this.show = false
         this.$nextTick(() => {
