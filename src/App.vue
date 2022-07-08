@@ -83,9 +83,6 @@ export default {
   padding: 10px;
 }
 
-.nav a {
-  color: black !important;
-}
 
 .nav a.router-link-exact-active {
   font-size: 20px;
