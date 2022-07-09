@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-content-center flex-wrap">
+  <div class="d-flex justify-content-center flex-wrap app">
     <b-card
       style="min-width: 20rem;"
       class="mb-1"
@@ -118,5 +118,8 @@ export default {
 }
 .icon{
   margin-right: 8px;
+}
+.app {
+  text-align: center;
 }
 </style>

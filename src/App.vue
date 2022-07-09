@@ -1,13 +1,52 @@
 <template>
 <body class="body">
-  <div id="app">
-    <div id="nav">
 
       <header class="mb-5" v-if="($route.path.split('/')[1] !== 'login') && ($route.path.split('/')[1] !== 'register')"> 
         <!-- UN COMPONENTE DONDE IRA NUESTRO NAVBAR -->
-          <router-link class="link" :to="{name: 'Home'}">home</router-link> |
-          <router-link class="link mb-5" :to="{name: 'About'}">about</router-link> |
-          <button class="link mb-5" @click="logout">Cerrar sesion</button> 
+        <div>
+          <b-navbar toggleable="lg"  variant="warning" class="nav">
+            <b-navbar-brand class="mx-2">Social CO</b-navbar-brand>
+
+            <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+
+            <b-collapse id="nav-collapse" is-nav>
+              <b-navbar-nav class="ml-auto">
+                <b-nav-form>
+                  <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
+                </b-nav-form>
+              </b-navbar-nav>
+              
+              <b-navbar-nav>
+                <b-nav-item :to="{name: 'Home'}">
+                  <b-icon icon="house-door"/>
+                </b-nav-item>
+                <b-nav-item :to="{name: 'Message'}">
+                  <b-icon icon="chat"/>
+                </b-nav-item>
+              <b-nav-item :to="{name: 'ToShare'}">
+                  <b-icon icon="arrow-up-right-square"/>
+                </b-nav-item>
+                <b-nav-item :to="{name: 'Notification'}">
+                  <b-icon icon="heart"/>
+                </b-nav-item>
+                <b-nav-item href="#">
+                  <b-icon icon="person-lines-fill"/>
+                  </b-nav-item>
+                <b-nav-item-dropdown>
+                  <b-dropdown-item href="#">Perfil</b-dropdown-item>
+                  <b-dropdown-item href="#">Configuraciónes</b-dropdown-item>
+                  <b-dropdown-item @click="logout">Cerrar sesion</b-dropdown-item>
+                </b-nav-item-dropdown>
+              </b-navbar-nav>
+              
+       
+              
+              
+
+            </b-collapse>
+          </b-navbar>
+        </div>
+
 
       </header>
       
@@ -18,8 +57,6 @@
         <!-- UN COMPONENTE DONDE IRA NUESTRO FOOTER -->
 
       </footer>
-    </div>
-  </div>
 </body>
 </template>
 <script>
@@ -41,27 +78,13 @@ export default {
   height: 100vh;
   width: 100vw;
 }
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+
+.nav {
+  padding: 10px;
 }
 
-#nav {
-  padding: 30px;
-}
 
-#nav a {
-  font-weight: bold;
-  color: white;
-}
-
-#nav a.router-link-exact-active {
-  color: #f3a310;
-}
-.link{
-    text-decoration-line: none;
+.nav a.router-link-exact-active {
+  font-size: 20px;
 }
 </style>
