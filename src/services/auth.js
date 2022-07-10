@@ -23,5 +23,15 @@ export default {
         }).catch((error) => {
             return error.response
         });
-    }
+    },
+    dashboard(user) {
+        return axios.post(`${config.api_route}auth/register`,
+        user,
+        {headers: { 'Content-Type': 'application/json'}}
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });
+    },
 }
