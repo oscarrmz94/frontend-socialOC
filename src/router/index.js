@@ -36,11 +36,11 @@ const routes = [
     name: 'Notification',
     component: () => import('../views/Notification.vue')
     },
-  // {
-  //   path: '/:pathMatch(.*)?',
-  //   name: 'NotFound',
-  //   component: () => import('../views/404.vue')
-  // },
+  {
+    path: '/:pathMatch(.*)?',
+    name: 'NotFound',
+    component: () => import('../views/Error404.vue')
+  },
 ]
 
 const router = new VueRouter({
@@ -52,8 +52,6 @@ router.beforeEach((to, from, next) => {
   const authentication = to.matched.some(item => item.meta.need_authentication)
   console.log(localStorage.getItem('token') === null)
   if (authentication && localStorage.getItem('token') === null) {
-    console.log('he entrado en el primero')
-
     next({name: 'Login'})
   } else {
 
