@@ -37,7 +37,6 @@ export default {
 <style>
 .body{
   background-color: #000000;
-  height: 100vh;
   width: 100vw;
 }
 .main-container {
