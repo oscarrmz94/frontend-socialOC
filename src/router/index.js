@@ -35,7 +35,12 @@ const routes = [
     path: '/notification',
     name: 'Notification',
     component: () => import('../views/Notification.vue')
-    },
+  },
+  {
+    path: '/profile/:uuid',
+    name: 'Profile',
+    component: () => import('../views/Profile.vue')
+  },
   {
     path: '/:pathMatch(.*)?',
     name: 'NotFound',

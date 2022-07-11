@@ -31,4 +31,33 @@ export default {
             return error.response
         });
     },
+    getNotFollowing(uuid) {
+        return axios.get(`${config.api_route}dashboard/user/suggestions/${uuid}`,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });
+    },
+    follow(data) {
+        return axios.post(`${config.api_route}dashboard/user/follow/`,
+        data,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });
+    },
 }
