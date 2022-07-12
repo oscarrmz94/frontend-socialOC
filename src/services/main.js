@@ -60,4 +60,18 @@ export default {
             return error.response
         });
     },
+    getUser(uuid) {
+        return axios.get(`${config.api_route}dashboard/user/get-user/${uuid}`,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });
+    },
 }

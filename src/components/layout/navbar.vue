@@ -43,7 +43,7 @@
   </b-navbar> -->
 
 
-  <nav class="nav text-white">
+  <nav class="main-nav text-white">
     <div class="d-flex justify-content-between align-items-center col-9">
       <div class="logo-brand h2">SocialOC</div>
 
@@ -95,14 +95,15 @@ export default {
 </script>
 
 <style>
-.nav {
+.main-nav {
   padding: 10px;
   background-color: #444;
   display: flex;
   justify-content: center;
   height: 80px;
+  list-style: none;
 }
-.nav a.router-link-exact-active {
+.main-nav a.router-link-exact-active {
   font-size: 20px;
 }
 .search-container {

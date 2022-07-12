@@ -29,17 +29,20 @@ const routes = [
   {
   path: '/toshare',
   name: 'ToShare',
-  component: () => import('../views/Toshare.vue')
+  component: () => import('../views/Toshare.vue'),
+  meta: {need_authentication: true}
   },
   {
     path: '/notification',
     name: 'Notification',
-    component: () => import('../views/Notification.vue')
+    component: () => import('../views/Notification.vue'),
+    meta: {need_authentication: true}
   },
   {
     path: '/profile/:uuid',
     name: 'Profile',
-    component: () => import('../views/Profile.vue')
+    component: () => import('../views/Profile.vue'),
+    meta: {need_authentication: true}
   },
   {
     path: '/:pathMatch(.*)?',
