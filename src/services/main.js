@@ -74,4 +74,32 @@ export default {
             return error.response
         });
     },
+    getFollowersList(uuid) {
+        return axios.get(`${config.api_route}dashboard/user/followers-list/${uuid}`,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });
+    },
+    getFollowingList(uuid) {
+        return axios.get(`${config.api_route}dashboard/user/following-list/${uuid}`,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });
+    },
 }

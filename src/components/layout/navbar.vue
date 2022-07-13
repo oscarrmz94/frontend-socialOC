@@ -45,7 +45,10 @@
 
   <nav class="main-nav text-white">
     <div class="d-flex justify-content-between align-items-center col-9">
-      <div class="logo-brand h2">SocialOC</div>
+      <router-link to="/" class="text-decoration-none text-white">
+        <div class="logo-brand h2">SocialOC</div>
+
+      </router-link>
 
       <div class="d-flex align-items-center d-none d-lg-flex">
         <div class="search-container">
@@ -72,8 +75,8 @@
         <b-nav-item href="#">
           <b-icon icon="person-lines-fill" variant="light" />
         </b-nav-item>
-        <b-nav-item-dropdown variant="light" class="text-white">
-          <b-dropdown-item href="#">Perfil</b-dropdown-item>
+        <b-nav-item-dropdown variant="light" class="text-white dropdown-nav">
+          <b-dropdown-item @click="redirectProfile">Perfil</b-dropdown-item>
           <b-dropdown-item href="#">Configuraciónes</b-dropdown-item>
           <b-dropdown-item @click="logout">Cerrar sesion</b-dropdown-item>
         </b-nav-item-dropdown>
@@ -88,8 +91,19 @@
 import { mapActions } from "vuex";
 
 export default {
+  props: {
+    user_uuid: {
+      type: String,
+      required: true
+    }
+  },
   methods: {
     ...mapActions(["logout"]),
+
+    redirectProfile() {
+      this.$router.push({name: 'Profile', params:{uuid: this.user_uuid}})
+      this.$router.go();
+    }
   },
 };
 </script>
@@ -135,6 +149,11 @@ export default {
 }
 .form-control {
   outline: none !important;
-
+}
+.dropdown-nav a {
+  color: white;
+}
+.dropdown-nav ul {
+  background: gray ;
 }
 </style>

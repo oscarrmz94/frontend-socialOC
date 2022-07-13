@@ -14,6 +14,7 @@
     "core-js": "^3.6.5",
     "vue": "^2.7.1",
     "vue-router": "^3.2.0",
+    "vue-video-thumbnail": "^0.1.12",
     "vuex": "^3.4.0"
   },
   "devDependencies": {

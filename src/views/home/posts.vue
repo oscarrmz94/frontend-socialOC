@@ -1,5 +1,5 @@
 <template>
-  <div class="col-7 mx-auto">
+  <div class="col-9 mx-auto">
 
     <b-card :img-src="post.images" :img-alt="`Image-${post.caption}`" img-top class="mb-5" v-for="(post, index) in publications" :key="index">
       <b-card-text>

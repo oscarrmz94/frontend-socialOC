@@ -1,7 +1,10 @@
 <template>
   <div class="text-white">
     <b-tabs content-class="main-tabs" align="center" class="col-12">      
-      <b-tab title="Posts"><p>I'm the second tab</p></b-tab>
+      <b-tab title="Posts">
+        <h3 class="text-center mt-5" v-if="posts_user.length === 0">There is no posts yet</h3>
+        <post-component :posts_user="posts_user"/>
+      </b-tab>
       <b-tab title="Videos"><p>I'm the second tab</p></b-tab>
       <b-tab title="Tagged" ><p>I'm a disabled tab!</p></b-tab>
     </b-tabs>
@@ -12,8 +15,12 @@
 
 <script>
 //import mainServices from '@/services/main'
+import postComponent from './PostProfileComponent.vue'
 
 export default {
+  components: {
+    postComponent
+  },
   props: {
     posts_user: {
       type: Array,
@@ -21,8 +28,8 @@ export default {
     }
   },
 
-  created() {
-    console.log(this.posts_user)
+  mounted() {
+    console.log(this.posts_user, ' componente padre')
   },
 
   methods: {
@@ -38,6 +45,12 @@ export default {
     background-color: #444;
 }
 .main-tabs {
-    background-color: transparent !important;
+  background-color: transparent !important;
+}
+.nav-link {
+  color: white !important;
+}
+.nav-link.active {
+  color: #444 !important;
 }
 </style>
