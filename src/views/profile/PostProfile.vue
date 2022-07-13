@@ -29,7 +29,6 @@ export default {
   },
 
   mounted() {
-    console.log(this.posts_user, ' componente padre')
   },
 
   methods: {

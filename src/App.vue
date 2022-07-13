@@ -6,7 +6,7 @@
       </header>
       
       <!-- CONTENEDOR PRINCIPAL -->
-      <div class="d-flex justify-content-center">
+      <div class="main-container col-9 mx-auto">
         <router-view/>
       </div>
 
@@ -51,5 +51,8 @@ export default {
 .body{
   background-color: #2c2a2a;
   width: 100vw;
+}
+.main-container {
+  min-height: 100vh;
 }
 </style>

@@ -28,7 +28,7 @@
     </b-row>
 
     <b-modal v-model="show_modal" scrollable size="sm" hide-footer>
-      <list-friends-modal :followers="followers"/>
+      <list-friends-modal :followers="followers" v-on:close_modal="show_modal = false"/>
     </b-modal>
 
     <b-row>
@@ -60,18 +60,18 @@ export default {
   },
 
   created() {
-    this.getDataUser();
+    this.getDataUser(this.$route.params.uuid);
+    console.log('hellooooooo')
   },
 
   methods: {
-    getDataUser() {
+    getDataUser(uuid) {
       mainServices.dashboard().then((user_token) => {
         this.user_uuid = user_token.uuid;
       });
-      mainServices.getUser(this.$route.params.uuid).then((response) => {
+      mainServices.getUser(uuid).then((response) => {
           this.user = response.user;
           this.posts_user = response.user.posts
-          console.log(this.user)
       })
     },
 
@@ -86,6 +86,11 @@ export default {
       mainServices.getFollowingList(uuid).then((response) => {
         this.followers = response.followers_list;
       })
+    }
+  },
+  watch: {
+    $route(new_value) {
+      this.getDataUser(new_value.params.uuid)
     }
   }
 }

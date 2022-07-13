@@ -33,8 +33,8 @@ export default {
   },
   methods: {
     redirect(uuid) {
-      this.$router.push({ path: `/profile/${uuid}`})
-      this.$router.go()
+      this.$emit('close_modal');
+      this.$router.push({ path: `/profile/${uuid}`});
     }
   }
 }

@@ -38,7 +38,6 @@ export default {
   },
 
   mounted() {
-    console.log(this.posts_user, 'this is publications');
   },
   methods: {
     isVideo(src) {

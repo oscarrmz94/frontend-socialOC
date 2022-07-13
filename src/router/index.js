@@ -58,7 +58,6 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const authentication = to.matched.some(item => item.meta.need_authentication)
-  console.log(localStorage.getItem('token') === null)
   if (authentication && localStorage.getItem('token') === null) {
     next({name: 'Login'})
   } else {
