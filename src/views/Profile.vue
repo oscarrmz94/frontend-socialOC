@@ -28,7 +28,7 @@
     </b-row>
 
     <b-modal v-model="show_modal" scrollable size="sm" hide-footer>
-      <list-friends-modal :followers="followers" v-on:close_modal="show_modal = false"/>
+      <list-friends-modal :followers="followers" v-on:close_modal="show_modal = false" :toggle_text="toggle_text"/>
     </b-modal>
 
     <b-row>
@@ -55,7 +55,8 @@ export default {
       posts_user: [],
       user_uuid: '',
       show_modal: false,
-      followers: []
+      followers: [],
+      toggle_text: 'null'
     }
   },
 
@@ -82,6 +83,7 @@ export default {
       })
     },
     getFollowing(uuid) {
+      this.toggle_text = 'Following'
       this.show_modal = true;
       mainServices.getFollowingList(uuid).then((response) => {
         this.followers = response.followers_list;

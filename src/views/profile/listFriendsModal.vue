@@ -16,7 +16,7 @@
         <b-button variant="outline-dark" @click="followAction(user.uuid, index)">
             <b-spinner :id="`b-spinner${index}`" class="d-none" />
             <div class="d-block" :id="`container-follow-button-${index}`">
-            <span :id="`follow-text-${index}`">Follow</span>
+            <span :id="`follow-text-${index}`">{{toggle_text}}</span>
             </div>
         </b-button>
       </div>
@@ -24,10 +24,22 @@
 </template>
 
 <script>
+import mainServices from '@/services/main'
+
 export default {
+  data() {
+    return {
+      toggle_follow: []
+    }
+  },
   props: {
     followers: {
       type: Array,
+      required: true
+    },
+    // NEED A TOGGLE TEXT, FOLLOW OR UNFOLLOW
+    toggle_text: {
+      type: String,
       required: true
     }
   },
@@ -35,6 +47,35 @@ export default {
     redirect(uuid) {
       this.$emit('close_modal');
       this.$router.push({ path: `/profile/${uuid}`});
+    },
+    followAction(followed_uuid, index) {
+      this.toggle_follow[index] = !this.toggle_follow[index];
+      const container_follow = document.getElementById(`container-follow-button-${index}`);
+      const spinner = document.getElementById(`b-spinner${index}`);
+
+      container_follow.classList.replace('d-block', 'd-none');
+      spinner.classList.replace('d-none', 'd-block');
+      const data = {
+        user_follower_uuid: this.user_uuid,
+        user_followed_uuid: followed_uuid
+      }
+      mainServices.follow(data).then(() => {
+        setTimeout(() => {
+          spinner.classList.replace('d-block', 'd-none')
+          container_follow.classList.replace('d-none', 'd-block');
+        }, 500);
+
+        if (this.toggle_follow[index])
+          document.getElementById(`follow-text-${index}`).innerHTML = 'Unfollow'
+        else
+          document.getElementById(`follow-text-${index}`).innerHTML = 'Follow'
+      })
+    },
+
+    fillToggle() {
+      this.not_following.forEach(() => {
+        this.toggle_follow.push(false);
+      })
     }
   }
 }
