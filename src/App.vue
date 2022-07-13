@@ -6,8 +6,8 @@
       </header>
       
       <!-- CONTENEDOR PRINCIPAL -->
-      <div class="main-container col-9 mx-auto">
-        <router-view />
+      <div class="d-flex justify-content-center">
+        <router-view/>
       </div>
 
       <footer v-if="($route.path.split('/')[1] !== 'login') && ($route.path.split('/')[1] !== 'register')">
@@ -51,9 +51,5 @@ export default {
 .body{
   background-color: #2c2a2a;
   width: 100vw;
-}
-.main-container {
-  min-height: 700px;
-
 }
 </style>
