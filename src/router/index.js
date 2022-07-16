@@ -45,6 +45,12 @@ const routes = [
     meta: {need_authentication: true}
   },
   {
+    path: '/account/edit',
+    name: 'EditProfile',
+    component: () => import('../views/profile/editProfile.vue'),
+    meta: {need_authentication: true}
+  },
+  {
     path: '/:pathMatch(.*)?',
     name: 'NotFound',
     component: () => import('../views/Error404.vue')

@@ -100,12 +100,16 @@ export default {
     onSubmit(event) {
       event.preventDefault();
       
+
       service_auth.login(this.user).then((response) => {
         if (response.error === null) {
-          
-          // MONSTRAR UNA NOTIFICACION DE QUE HA INICIADO CON EXITO
           this.settingToken(response.data.token)
-          this.$router.push({name: 'Home'});
+          service_auth.dashboard().then((user_data) => {
+            localStorage.setItem('user_data', JSON.stringify(user_data))
+            this.$router.push({name: 'Home'});
+          })
+          // MONSTRAR UNA NOTIFICACION DE QUE HA INICIADO CON EXITO
+
         }
       })
     }

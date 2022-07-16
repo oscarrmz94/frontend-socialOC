@@ -13,7 +13,7 @@
               <span class="text-muted d-block col-12">@{{user.nickname}}</span>
             </div>
 
-            <b-button class="ml-2 d-block" v-if="user_uuid === user.uuid">Edit Profile</b-button>
+            <b-button class="ml-2 d-block" v-if="user_uuid === user.uuid" @click="$router.push({name: 'EditProfile'})">Edit Profile</b-button>
           </b-col>
         
           <b-col class="col-12 d-flex justify-content-between mb-4">
@@ -62,7 +62,6 @@ export default {
 
   created() {
     this.getDataUser(this.$route.params.uuid);
-    console.log('hellooooooo')
   },
 
   methods: {
@@ -77,8 +76,10 @@ export default {
     },
 
     getFollowers(uuid) {
+      this.toggle_text = 'null'
       this.show_modal = true;
       mainServices.getFollowersList(uuid).then((response) => {
+        this.followers = [];
         this.followers = response.followers_list;
       })
     },
@@ -86,6 +87,7 @@ export default {
       this.toggle_text = 'Following'
       this.show_modal = true;
       mainServices.getFollowingList(uuid).then((response) => {
+        this.followers = [];
         this.followers = response.followers_list;
       })
     }

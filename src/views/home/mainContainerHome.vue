@@ -6,7 +6,7 @@
       </b-col>
 
       <b-col class="col-4">
-        <list-friends :not_following="not_following" :user_uuid="user_uuid"/>
+        <list-friends :not_following="not_following" :user_uuid="user.uuid"/>
       </b-col>
     </b-row>
   </div>
@@ -16,6 +16,7 @@
 import listFriends from "@/views/home/listFriends.vue";
 import posts from "@/views/home/posts.vue";
 import mainServices from '@/services/main';
+import utils from "@/libs/utils";
 
 export default {
   components: {
@@ -26,21 +27,24 @@ export default {
     return {
       publications: [],
       not_following: [],
-      user_uuid: '',
+      user: {},
     }
   },
-  beforeCreate() {
+  created() {
+    this.getMainData();
+  },
+  methods: {
+    getMainData() {
+      this.user = utils.getUserData();    
 
-    mainServices.dashboard().then((user_token) => {
-      this.user_uuid = user_token.uuid;
-      mainServices.getFollowersPosts(user_token.uuid).then((response) => {
+      mainServices.getFollowersPosts(this.user.uuid).then((response) => {
         this.publications = response.new_rows;
       });
 
-      mainServices.getNotFollowing(user_token.uuid).then((response) => {
+      mainServices.getNotFollowing(this.user.uuid).then((response) => {
         this.not_following = response.not_following;
       });
-    })
-  },
+    }
+  }
 };
 </script>

@@ -78,7 +78,7 @@
         <b-nav-item-dropdown variant="light" class="text-white dropdown-nav">
           <b-dropdown-item @click="redirectProfile">Perfil</b-dropdown-item>
           <b-dropdown-item href="#">Configuraciónes</b-dropdown-item>
-          <b-dropdown-item @click="logout">Cerrar sesion</b-dropdown-item>
+          <b-dropdown-item @click="logoutAction()">Cerrar sesion</b-dropdown-item>
         </b-nav-item-dropdown>
       </div>
 
@@ -94,7 +94,8 @@ export default {
   props: {
     user_uuid: {
       type: String,
-      required: true
+      required: true,
+      default: ''
     }
   },
   methods: {
@@ -102,6 +103,10 @@ export default {
 
     redirectProfile() {
       this.$router.push({name: 'Profile', params:{uuid: this.user_uuid}})
+    },
+    logoutAction() {
+      localStorage.clear();
+      this.logout();
     }
   },
 };

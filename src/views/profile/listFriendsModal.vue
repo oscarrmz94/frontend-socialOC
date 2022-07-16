@@ -40,7 +40,7 @@ export default {
     // NEED A TOGGLE TEXT, FOLLOW OR UNFOLLOW
     toggle_text: {
       type: String,
-      required: true
+      required: false
     }
   },
   methods: {
