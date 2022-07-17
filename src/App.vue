@@ -19,7 +19,7 @@
 import { mapActions } from 'vuex';
 import navbarComponent from '@/components/layout/navbar.vue'
 import footerComponent from '@/components/layout/footer.vue'
-import mainServices from '@/services/main'
+import utils from './libs/utils';
 
 export default {
   components: {
@@ -35,14 +35,16 @@ export default {
     ...mapActions(['readToken']),
     
     getUserUuid() {
-      mainServices.dashboard().then((user_token) => {
-        this.user_uuid = user_token.uuid;
-      });
+            console.log('he entrado al método')
+
+      this.user_uuid = utils.getUserData().uuid;
     }
   },
   created() {
+    console.log('hello')
     this.readToken();
     this.getUserUuid();
+
   }
 }
 </script>

@@ -13,7 +13,9 @@
     "bootstrap-vue": "^2.22.0",
     "core-js": "^3.6.5",
     "vue": "^2.7.1",
+    "vue-canvasvideo": "^1.0.0",
     "vue-router": "^3.2.0",
+    "vue-upload-drop-medias": "^1.0.9",
     "vue-video-thumbnail": "^0.1.12",
     "vuex": "^3.4.0"
   },

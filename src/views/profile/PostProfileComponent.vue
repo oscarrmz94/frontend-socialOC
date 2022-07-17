@@ -1,7 +1,7 @@
 <template>
   <div class="col-12 mx-auto my-4 row gx-5">
-    <div v-for="(post, index) in posts_user" :key="index" class="col">
-       <b-img :src="post.images" class="img-post-profile col-12" v-if="!isVideo(post.images)"/>
+    <div v-for="(post, index) in posts_user" :key="index" class="col-4 mb-5">
+       <b-img :src="post.images" class="img-post-profile col-12" v-if="!utils.isVideo(post.images)"/>
 
         <VueVideoThumbnail 
         :video-src="post.images"
@@ -21,14 +21,16 @@
 
 <script>
 import VueVideoThumbnail from 'vue-video-thumbnail'
-
+import utils from '@/libs/utils';
 
 export default {
   components: {
     VueVideoThumbnail
   },
   data() {
-    return {};
+    return {
+      utils
+    };
   },
   props: {
     posts_user: {
@@ -39,12 +41,6 @@ export default {
 
   mounted() {
   },
-  methods: {
-    isVideo(src) {
-      if (src.split('.')[3] === 'mp4')
-        return true
-    }
-  }
 };
 </script>
 

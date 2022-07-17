@@ -88,4 +88,19 @@ export default {
             return error.response
         });
     },
+    uploadPost(data) {
+        return axios.post(`${config.api_route}dashboard/posts/upload-post`,
+        data,
+        {
+            headers: {
+                'auth-token': store.state.token,
+                'Content-Type': 'application/json'
+            }
+        }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });   
+    }
 }

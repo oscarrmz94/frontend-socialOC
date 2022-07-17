@@ -102,7 +102,7 @@ export default {
     ...mapActions(["logout"]),
 
     redirectProfile() {
-      this.$router.push({name: 'Profile', params:{uuid: this.user_uuid}})
+      this.$router.push({name: 'Profile', params:{uuid: this.user_uuid}}).catch(() => {})
     },
     logoutAction() {
       localStorage.clear();

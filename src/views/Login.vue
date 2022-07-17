@@ -1,12 +1,10 @@
 <template>
-  <div class="d-flex justify-content-center flex-wrap app">
+  <div class="d-flex justify-content-center app align-items-center">
     <b-card
-      style="min-width: 20rem;"
-      class="mb-1"
+      class="mb-1 card-login"
       border-variant="warning"
       header="Social OC"
       header-bg-variant="warning"
-
     >
      <div>
         <b-form @submit="onSubmit">
@@ -88,7 +86,7 @@ export default {
   data() {
     return {
       user: {
-        email: 'chino@chino1.com',
+        email: 'chino@chino.com',
         password: 'Pass2018#'
       }
     }
@@ -125,5 +123,11 @@ export default {
 }
 .app {
   text-align: center;
+  height: 100vh;
+}
+.card-login {
+  top: -3em;
+  height: 360px;
+  min-width: 20rem;
 }
 </style>

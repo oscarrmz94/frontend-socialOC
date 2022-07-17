@@ -13,7 +13,7 @@
               <span class="text-muted d-block col-12">@{{user.nickname}}</span>
             </div>
 
-            <b-button class="ml-2 d-block" v-if="user_uuid === user.uuid" @click="$router.push({name: 'EditProfile'})">Edit Profile</b-button>
+            <b-button class="ml-2 d-block" v-if="own_user_uuid === user.uuid" @click="$router.push({name: 'EditProfile'})">Edit Profile</b-button>
           </b-col>
         
           <b-col class="col-12 d-flex justify-content-between mb-4">
@@ -43,6 +43,7 @@
 import mainServices from '@/services/main'
 import postProfile from './profile/PostProfile.vue'
 import ListFriendsModal from './profile/listFriendsModal.vue'
+import utils from '../libs/utils'
 
 export default {
   components: {
@@ -53,7 +54,7 @@ export default {
     return {
       user: {},
       posts_user: [],
-      user_uuid: '',
+      own_user_uuid: '',
       show_modal: false,
       followers: [],
       toggle_text: 'null'
@@ -66,12 +67,12 @@ export default {
 
   methods: {
     getDataUser(uuid) {
-      mainServices.dashboard().then((user_token) => {
-        this.user_uuid = user_token.uuid;
-      });
+      this.own_user_uuid = utils.getUserData().uuid;
+
       mainServices.getUser(uuid).then((response) => {
-          this.user = response.user;
-          this.posts_user = response.user.posts
+        console.log(response)
+        this.user = response.user;
+        this.posts_user = response.user.posts
       })
     },
 
