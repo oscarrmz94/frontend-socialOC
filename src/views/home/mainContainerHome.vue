@@ -7,7 +7,7 @@
           Upload post
         </b-button>
 
-        <posts :publications="publications" v-on:update_publications="updatePost"/>
+        <posts :publications="publications" v-on:update_publications="updatePost" :user_uuid="user.uuid"/>
       </b-col>
 
       <b-col class="col-4">

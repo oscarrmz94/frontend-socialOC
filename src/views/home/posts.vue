@@ -1,5 +1,6 @@
 <template>
   <div class="col-8 mx-auto">
+
     <div v-for="(post, index) in publications" :key="index">
       <b-card
         border-variant="warning"
@@ -23,52 +24,18 @@
             <b-icon
               icon="three-dots-vertical"
               class="dots"
-              @click="show_actions_method(post.uuid)"
+              @click="show_actions_method(post)"
             />
           </div>
         </div>
-        <!-- <b-img
-          :src="post.images"
-          v-if="!utils.isVideo(post.images)"
-          class="col-12"
-        />
-        <video
-          v-else
-          :src="post.images"
-          autoplay
-          muted
-          controls
-          class="video-main-post"
-        /> -->
-        <b-carousel
-          img-width="1024"
-          img-height="480"
-          controls
-          
-          class="mb-5"
-        >
-          <b-carousel-slide
-            v-if="!utils.isVideo(post.images)"
-            :img-src="post.images"
-          />
+        <Slider :data="getImages(post.images)" :post_uuid="post.uuid"/>
 
-          <b-carousel-slide v-else> 
-            hello
-            <video
-              :src="post.images"
-              autoplay
-              muted
-              controls
-              class="video-main-post"
-            /> 
-          </b-carousel-slide>
-        </b-carousel>
-        <!-- <div class="d-flex">
+        <div class="d-flex">
           <b-icon class="icon" icon="heart" />
           <b-icon class="icon" icon="chat" />
           <b-icon class="icon" icon="envelope" />
           <b-icon class="icon" icon="bookmark" />
-        </div> -->
+        </div>
         <b-card-text class="m-2">
           {{ post.caption }}
         </b-card-text>
@@ -88,7 +55,7 @@
       size="sm"
       content-class="modal-actions-content"
     >
-      <div class="h5 button-modal first m-0" @click="deletePost()">Delete</div>
+      <div class="h5 button-modal first m-0" @click="deletePost()" v-if="user_uuid === post.user_uuid">Delete</div>
       <div class="h5 button-modal m-0">Unfollow</div>
       <div class="h5 button-modal m-0">Go to post</div>
       <div class="h5 button-modal m-0">Share to</div>
@@ -101,14 +68,17 @@
 <script>
 import utils from "@/libs/utils";
 import mainServices from "@/services/main";
+import Slider from '@/views/home/Slider.vue'
 
 export default {
-  components: {},
+  components: {
+    Slider
+  },
   data() {
     return {
       utils,
       show_actions: false,
-      uuid_post: "",
+      post: {},
     };
   },
   props: {
@@ -116,6 +86,10 @@ export default {
       type: Array,
       required: true,
     },
+    user_uuid: {
+      type: String,
+      required: true
+    }
   },
   methods: {
     deletePost() {
@@ -124,12 +98,12 @@ export default {
       this.$dialog
         .confirm("Are you sure that You want to delete this post ?")
         .then(() => {
-          mainServices.deletePost(this.uuid_post).then(() => {
+          mainServices.deletePost(this.post.uuid).then(() => {
             this.$emit(
               "update_publications",
-              this.publications.filter((item) => item.uuid !== this.uuid_post)
+              this.publications.filter((item) => item.uuid !== this.post.uuid)
             );
-            this.uuid_post = "";
+            this.post = {};
             this.$bvToast.toast("The post has been deleted successfully", {
               title: "Post deleted",
               variant: "success",
@@ -142,13 +116,16 @@ export default {
           // This will be triggered when user clicks on cancel
         });
     },
-    show_actions_method(uuid) {
+    show_actions_method(post) {
       this.show_actions = true;
-      this.uuid_post = uuid;
+      this.post = post;
     },
+    getImages(images) {
+       return images.split(',')
+    }
   },
   created() {
-    console.log(this.publications, "hse");
+    console.log(this.publications, "hses");
   },
 };
 </script>

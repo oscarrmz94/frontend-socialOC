@@ -105,8 +105,10 @@ export default {
       this.$router.push({name: 'Profile', params:{uuid: this.user_uuid}}).catch(() => {})
     },
     logoutAction() {
+      this.$emit('clear_user_uuid');
       localStorage.clear();
       this.logout();
+
     }
   },
 };
