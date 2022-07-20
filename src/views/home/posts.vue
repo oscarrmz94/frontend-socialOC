@@ -23,11 +23,11 @@
             <b-icon
               icon="three-dots-vertical"
               class="dots"
-              @click="show_actions = true"
+              @click="show_actions_method(post.uuid)"
             />
           </div>
         </div>
-        <b-img
+        <!-- <b-img
           :src="post.images"
           v-if="!utils.isVideo(post.images)"
           class="col-12"
@@ -39,14 +39,36 @@
           muted
           controls
           class="video-main-post"
-        />
+        /> -->
+        <b-carousel
+          img-width="1024"
+          img-height="480"
+          controls
+          
+          class="mb-5"
+        >
+          <b-carousel-slide
+            v-if="!utils.isVideo(post.images)"
+            :img-src="post.images"
+          />
 
-        <div class="d-flex">
+          <b-carousel-slide v-else> 
+            hello
+            <video
+              :src="post.images"
+              autoplay
+              muted
+              controls
+              class="video-main-post"
+            /> 
+          </b-carousel-slide>
+        </b-carousel>
+        <!-- <div class="d-flex">
           <b-icon class="icon" icon="heart" />
           <b-icon class="icon" icon="chat" />
           <b-icon class="icon" icon="envelope" />
           <b-icon class="icon" icon="bookmark" />
-        </div>
+        </div> -->
         <b-card-text class="m-2">
           {{ post.caption }}
         </b-card-text>
@@ -78,13 +100,15 @@
 
 <script>
 import utils from "@/libs/utils";
+import mainServices from "@/services/main";
 
 export default {
   components: {},
   data() {
     return {
       utils,
-      show_actions: false
+      show_actions: false,
+      uuid_post: "",
     };
   },
   props: {
@@ -97,18 +121,34 @@ export default {
     deletePost() {
       this.show_actions = false;
 
-      this.$dialog.confirm('Are you sure that You want to delete this post ?')
+      this.$dialog
+        .confirm("Are you sure that You want to delete this post ?")
         .then(() => {
-            // This will be triggered when user clicks on proceed
-          console.log('Yeah delete this post')
+          mainServices.deletePost(this.uuid_post).then(() => {
+            this.$emit(
+              "update_publications",
+              this.publications.filter((item) => item.uuid !== this.uuid_post)
+            );
+            this.uuid_post = "";
+            this.$bvToast.toast("The post has been deleted successfully", {
+              title: "Post deleted",
+              variant: "success",
+              solid: true,
+              auto_hide_delay: 1000,
+            });
+          });
         })
         .catch(() => {
-            // This will be triggered when user clicks on cancel
+          // This will be triggered when user clicks on cancel
         });
-    }
+    },
+    show_actions_method(uuid) {
+      this.show_actions = true;
+      this.uuid_post = uuid;
+    },
   },
   created() {
-    console.log(this.publications, 'hse');
+    console.log(this.publications, "hse");
   },
 };
 </script>

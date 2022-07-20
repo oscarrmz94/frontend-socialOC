@@ -102,5 +102,19 @@ export default {
         }).catch((error) => {
             return error.response
         });   
+    },
+    deletePost(uuid) {
+        return axios.delete(`${config.api_route}dashboard/posts/delete-post/${uuid}`,
+        {
+            headers: {
+                'auth-token': store.state.token,
+                'Content-Type': 'application/json'
+            }
+        }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });   
     }
 }

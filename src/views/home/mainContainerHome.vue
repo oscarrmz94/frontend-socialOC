@@ -7,7 +7,7 @@
           Upload post
         </b-button>
 
-        <posts :publications="publications"/>
+        <posts :publications="publications" v-on:update_publications="updatePost"/>
       </b-col>
 
       <b-col class="col-4">
@@ -91,16 +91,26 @@ export default {
 
     },
     uploadPost() {
-      console.log(this.files_upload[0])
       const data = new FormData()
 
+      this.files_upload.forEach((item) => {
+        data.append('images', item);
+      })
       data.append('user_uuid', this.user.uuid);
-      data.append('images', this.files_upload[0]);
       data.append('caption', this.caption);
 
-      mainServices.uploadPost(data).then((response) => {
-        console.log(response)
+      mainServices.uploadPost(data).then(() => { 
+        this.$bvToast.toast('The post has been uploaded', {
+          title: 'Post uploaded',
+          variant: 'success',
+          solid: true,
+          auto_hide_delay: 1000
+        });
+        this.show_modal = false;
       })
+    },
+    updatePost(data) {
+      this.publications = data;
     }
   }
 };
