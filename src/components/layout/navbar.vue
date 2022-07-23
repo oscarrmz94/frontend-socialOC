@@ -44,7 +44,7 @@
 
 
   <nav class="main-nav text-white">
-    <div class="d-flex justify-content-between align-items-center col-9">
+    <div class="d-flex justify-content-between align-items-center col-11 col-lg-9">
       <router-link to="/" class="text-decoration-none text-white">
         <div class="logo-brand h2">SocialOC</div>
 
@@ -54,7 +54,6 @@
         <div class="search-container">
           <b-input-group class="b-icon-sarch">
             <b-form-input class="input-search" placeholder="Busca algo ..."></b-form-input>
-
             <b-input-group-prepend is-text class="button-search">
                 <b ><b-icon icon="search" /></b>
             </b-input-group-prepend>
@@ -76,33 +75,71 @@
           <b-icon icon="person-lines-fill" variant="light" />
         </b-nav-item>
         <b-nav-item-dropdown variant="light" class="text-white dropdown-nav">
-          <b-dropdown-item @click="redirectProfile">Perfil</b-dropdown-item>
-          <b-dropdown-item href="#">Configuraciónes</b-dropdown-item>
-          <b-dropdown-item @click="logoutAction()">Cerrar sesion</b-dropdown-item>
+          <b-dropdown-item @click="redirectProfile">Profile</b-dropdown-item>
+          <b-dropdown-item href="#">Settings</b-dropdown-item>
+          <b-dropdown-item @click="logoutAction()">Log out</b-dropdown-item>
         </b-nav-item-dropdown>
       </div>
 
       <!-- HAMBURGER DISPLAY -->
+
+      <b-icon icon="list" variant="light" class="list-icon d-lg-none" @click="open_hamburger = !open_hamburger"/>
+
+      <b-collapse v-model="open_hamburger" class="collapse-hamburger d-lg-none">
+          <b-input-group class="b-icon-sarch p-2">
+            <b-form-input class="input-search" placeholder="Busca algo ..."></b-form-input>
+            <b-input-group-prepend is-text class="button-search">
+                <b ><b-icon icon="search" /></b>
+            </b-input-group-prepend>
+          </b-input-group>
+
+          <b-nav-item :to="{ name: 'Home' }" class="p-2 nav-item-my" @click="open_hamburger = !open_hamburger">
+            <b-icon icon="house-door" variant="light" />
+            <span class="ms-1">Home</span>
+          </b-nav-item>
+          <b-nav-item :to="{ name: 'Message' }" class="p-2" @click="open_hamburger = !open_hamburger">
+            <b-icon icon="chat" variant="light" />
+            <span class="ms-1">Messages</span>
+          </b-nav-item>
+          <b-nav-item :to="{ name: 'ToShare' }" class="p-2" @click="open_hamburger = !open_hamburger">
+            <b-icon icon="arrow-up-right-square" variant="light" />
+            <span class="ms-1">Share</span>
+          </b-nav-item>
+          <b-nav-item :to="{ name: 'Notification' }" variant="light" class="p-2" @click="open_hamburger = !open_hamburger">
+            <b-icon icon="heart" variant="light" />
+            <span class="ms-1">Notifications</span>
+          </b-nav-item>
+
+          <b-nav-item :to="{ name: 'Message' }" class="p-2" @click="redirectProfile">
+            <span class="ms-1">Profile</span>
+          </b-nav-item>
+          <b-nav-item :to="{ name: 'ToShare' }" class="p-2" @click="open_hamburger = !open_hamburger">
+            <span class="ms-1">Settigns</span>
+          </b-nav-item>
+          <b-nav-item :to="{ name: 'Notification' }" variant="light" class="p-2" @click="logoutAction()">
+            <span class="ms-1">Log out</span>
+          </b-nav-item>
+      </b-collapse>
     </div>
   </nav>
 </template>
 
 <script>
 import { mapActions } from "vuex";
+import utils from "@/libs/utils";
 
 export default {
-  props: {
-    user_uuid: {
-      type: String,
-      required: true,
-      default: ''
+  data() {
+    return {
+      open_hamburger: false
     }
   },
   methods: {
     ...mapActions(["logout"]),
 
     redirectProfile() {
-      this.$router.push({name: 'Profile', params:{uuid: this.user_uuid}}).catch(() => {})
+      this.open_hamburger = false;
+      this.$router.push({name: 'Profile', params:{uuid: utils.getUserData().uuid}}).catch(() => {})
     },
     logoutAction() {
       this.$emit('clear_user_uuid');
@@ -110,7 +147,7 @@ export default {
       this.logout();
 
     }
-  },
+  }
 };
 </script>
 
@@ -161,5 +198,27 @@ export default {
 }
 .dropdown-nav ul {
   background: gray ;
+}
+.list-icon {
+  font-size: 30px;
+}
+.list-icon:hover {
+  cursor: pointer;
+}
+.collapse-hamburger {
+  z-index: 100;
+  position: absolute;
+  width: 100%;
+  top: 5em;
+  left: 0;
+  background-color: #444;
+  color: white;
+  
+}
+.collapse-hamburger a {
+  color: white;
+}
+.nav-item:hover{
+  background-color: rgb(108, 108, 108);
 }
 </style>

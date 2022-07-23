@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-row>
-      <b-col class="col-8">
+      <b-col class="col-12 col-md-8">
         <b-button class="mb-5 ms-5" variant="success" @click="showModal()">
           <b-icon icon="plus" />
           Upload post
@@ -10,7 +10,7 @@
         <posts :publications="publications" v-on:update_publications="updatePost" :user_uuid="user.uuid"/>
       </b-col>
 
-      <b-col class="col-4">
+      <b-col class="col-12 order-first order-md-last col-md-4">
         <list-friends :not_following="not_following" :user_uuid="user.uuid"/>
       </b-col>
     </b-row>

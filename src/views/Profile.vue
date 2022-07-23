@@ -1,38 +1,41 @@
 <template>
   <div class="text-white">
     <b-row class="mb-5">
-      <b-col class="col-8 mx-auto d-flex justify-content-around">
+      <b-col class="col-12 col-lg-8 mx-auto d-flex justify-content-around flex-wrap">
         <b-col class="col-3">
-          <b-avatar size="10em" class="avatar-profile"></b-avatar>
+          <b-avatar class="avatar-profile"></b-avatar>
         </b-col>
 
-        <b-col class="col-7">
-          <b-col class="col-12 d-flex justify-content-between align-items-center flex-wrap mb-4">
-            <div>
-              <h4 class="d-block">{{user.name}}</h4>
-              <span class="text-muted d-block col-12">@{{user.nickname}}</span>
-            </div>
+        <b-col class="col-7 mb-3">
+          <b-row>
 
-            <b-button class="ml-2 d-block" v-if="own_user_uuid === user.uuid" @click="$router.push({name: 'EditProfile'})">Edit Profile</b-button>
-          </b-col>
-        
-          <b-col class="col-12 d-flex justify-content-between mb-4">
-            <span><strong>{{(user.followers) ? user.posts.length : 0}}</strong> post</span>
-            <span class="span-followers" @click="getFollowers(user.uuid)"><strong>{{user.followers}}</strong> Followers</span>
-            <span class="span-followers" @click="getFollowing(user.uuid)"><strong>{{user.following}}</strong> Following</span>
-          </b-col>
+            <b-col class="col-12 d-flex justify-content-between align-items-center flex-wrap mb-4">
+              <div>
+                <h4 class="d-block">{{user.name}}</h4>
+                <span class="text-muted d-block col-12">@{{user.nickname}}</span>
+              </div>
+              <b-button class="ml-2 d-block" v-if="own_user_uuid === user.uuid" @click="$router.push({name: 'EditProfile'})">Edit Profile</b-button>
+            </b-col>
 
-          <b-col class="col-12">{{user.about}}</b-col>
+            <b-col class="col-12 order-first unordered d-flex justify-content-between my-4">
+              <span><strong>{{user.number_post}}</strong> post</span>
+              <span class="span-followers" @click="getFollowers(user.uuid)"><strong>{{user.followers}}</strong> Followers</span>
+              <span class="span-followers" @click="getFollowing(user.uuid)"><strong>{{user.following}}</strong> Following</span>
+            </b-col>
+
+          </b-row>
+
         </b-col>
+        <b-col class="col-12">{{user.about}}</b-col>
       </b-col>
     </b-row>
 
     <b-modal v-model="show_modal" scrollable size="sm" hide-footer>
-      <list-friends-modal :followers="followers" v-on:close_modal="show_modal = false" :toggle_text="toggle_text"/>
+      <list-friends-modal :followers="followers" v-on:close_modal="show_modal = false" v-on:update_followers="updateFollowers"/>
     </b-modal>
 
     <b-row>
-      <b-col class="col-11 mt-5 mx-auto">
+      <b-col class="col-12 mt-5 mx-auto">
         <post-profile :posts_user="posts_user"/>
       </b-col>
     </b-row>
@@ -57,7 +60,6 @@ export default {
       own_user_uuid: '',
       show_modal: false,
       followers: [],
-      toggle_text: 'null'
     }
   },
 
@@ -70,14 +72,15 @@ export default {
       this.own_user_uuid = utils.getUserData().uuid;
 
       mainServices.getUser(uuid).then((response) => {
-        console.log(response)
         this.user = response.user;
         this.posts_user = response.user.posts
       })
     },
-
+    updateFollowers(data) {
+      this.user.following += data
+      console.log(data)
+    },
     getFollowers(uuid) {
-      this.toggle_text = 'null'
       this.show_modal = true;
       mainServices.getFollowersList(uuid).then((response) => {
         this.followers = [];
@@ -85,11 +88,10 @@ export default {
       })
     },
     getFollowing(uuid) {
-      this.toggle_text = 'Following'
       this.show_modal = true;
       mainServices.getFollowingList(uuid).then((response) => {
         this.followers = [];
-        this.followers = response.followers_list;
+        this.followers = response.following_list;
       })
     }
   },
@@ -104,9 +106,18 @@ export default {
 <style>
 .avatar-profile {
     background-color: #444;
+    width: 10em;
+    height: 10em;
 }
 .span-followers:hover {
   cursor: pointer;
   text-decoration: underline;
+}
+
+@media(max-width: 576px) {
+  .avatar-profile {
+    width: 5em;
+    height: 5em;
+  } 
 }
 </style>

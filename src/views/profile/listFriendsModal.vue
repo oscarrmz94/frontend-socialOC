@@ -16,7 +16,7 @@
         <b-button variant="outline-dark" @click="followAction(user.uuid, index)">
             <b-spinner :id="`b-spinner${index}`" class="d-none" />
             <div class="d-block" :id="`container-follow-button-${index}`">
-            <span :id="`follow-text-${index}`">{{toggle_text}}</span>
+              <span :id="`follow-text-${index}`" >{{user.you_follow ? 'Following' : 'Follow'}}</span>
             </div>
         </b-button>
       </div>
@@ -25,11 +25,14 @@
 
 <script>
 import mainServices from '@/services/main'
+import utils from '@/libs/utils'
 
 export default {
   data() {
     return {
-      toggle_follow: []
+      toggle_follow: [],
+      user_uuid: '',
+      utils
     }
   },
   props: {
@@ -38,10 +41,12 @@ export default {
       required: true
     },
     // NEED A TOGGLE TEXT, FOLLOW OR UNFOLLOW
-    toggle_text: {
-      type: String,
-      required: false
-    }
+  },
+  created() {
+    this.user_uuid = utils.getUserData().uuid;
+    setTimeout(() => {
+      this.fillToggle();
+    }, 200);
   },
   methods: {
     redirect(uuid) {
@@ -59,22 +64,24 @@ export default {
         user_follower_uuid: this.user_uuid,
         user_followed_uuid: followed_uuid
       }
-      mainServices.follow(data).then(() => {
+      mainServices.follow(data).then((response) => {
         setTimeout(() => {
           spinner.classList.replace('d-block', 'd-none')
           container_follow.classList.replace('d-none', 'd-block');
         }, 500);
+        
+        (response.message === 'Following') ?  this.$emit('update_followers', 1) : this.$emit('update_followers', -1)
 
         if (this.toggle_follow[index])
-          document.getElementById(`follow-text-${index}`).innerHTML = 'Unfollow'
+          document.getElementById(`follow-text-${index}`).innerHTML = 'Following'
         else
           document.getElementById(`follow-text-${index}`).innerHTML = 'Follow'
       })
     },
 
     fillToggle() {
-      this.not_following.forEach(() => {
-        this.toggle_follow.push(false);
+      this.followers.forEach((item) => {
+        this.toggle_follow.push(item.you_follow);
       })
     }
   }

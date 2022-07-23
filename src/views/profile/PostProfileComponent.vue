@@ -1,14 +1,13 @@
 <template>
-  <div class="col-12 mx-auto my-4 row gx-5">
-    <div v-for="(post, index) in posts_user" :key="index" class="col-4 mb-5">
-       <b-img :src="post.images" class="img-post-profile col-12" v-if="!utils.isVideo(post.images)"/>
+  <div class="col-12 mx-auto my-4 d-flex flex-wrap">
+    <div v-for="(post, index) in posts_user" :key="index" class="col-4">
+       <b-img :src="getOneImage(post.images)" class="img-post-profile col-12 p-1" v-if="!utils.isVideo(post.images)"/>
+       
 
         <VueVideoThumbnail 
-        :video-src="post.images"
+        :video-src="getOneImage(post.images)"
         show-play-button
         class="img-post-profile"
-        :height="290"
-        :width="277"
         :snapshot-at-duration-percent="10"
         :chunks-quantity="10"
         v-else
@@ -38,15 +37,32 @@ export default {
       required: true,
     },
   },
-
+  methods: {
+    getOneImage(images) {
+      return images.split(',')[0]
+    }
+  },
   mounted() {
   },
 };
 </script>
 
 <style>
-.img-post-profile {
+.img-post-profile{
+    width: 100% !important;
     height: 290px;
     object-fit: cover;
 }
+.snapshot-generator img {
+  width: 100%;
+  height: 285px;
+}
+
+@media(max-width: 576px) {
+  .img-post-profile {
+    height: 150px;
+    object-fit: cover;
+  }
+}
+
 </style>

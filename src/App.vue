@@ -2,11 +2,11 @@
 <body class="body">
 
       <header class="mb-5" v-if="($route.path.split('/')[1] !== 'login') && ($route.path.split('/')[1] !== 'register')"> 
-        <navbar-component :user_uuid="user_uuid" v-on:clear_user_uuid="getData()"/>   
+        <navbar-component v-on:clear_user_uuid="getData()"/>   
       </header>
       
       <!-- CONTENEDOR PRINCIPAL -->
-      <div class="main-container col-9 mx-auto">
+      <div class="main-container col-12 col-lg-9 mx-auto">
         <router-view/>
       </div>
 
@@ -35,9 +35,7 @@ export default {
     ...mapActions(['readToken']),
     
     getUserUuid() {
-      console.log('he entrado al método')
       this.user_uuid = utils.getUserData().uuid;
-      console.log(this.user_uuid)
     },
     getData() {
       this.user_uuid = ''; 
@@ -46,6 +44,7 @@ export default {
     }
   },
   created() {
+    console.log('He entrado a mi app')
     this.getData();
   }
 }
