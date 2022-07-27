@@ -15,6 +15,7 @@
     "vue": "^2.7.1",
     "vue-canvasvideo": "^1.0.0",
     "vue-router": "^3.2.0",
+    "vue-toastify": "^1.8.1",
     "vue-upload-drop-medias": "^1.0.9",
     "vue-video-thumbnail": "^0.1.12",
     "vuejs-dialog": "^1.4.2",

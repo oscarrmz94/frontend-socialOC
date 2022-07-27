@@ -31,13 +31,14 @@
         <Slider :data="getImages(post.images)" :post_uuid="post.uuid"/>
 
         <div class="d-flex">
-          <b-icon class="icon" icon="heart" />
-          <b-icon class="icon" icon="chat" />
-          <b-icon class="icon" icon="envelope" />
-          <b-icon class="icon" icon="bookmark" />
+          <b-icon class="icon icon-heart-post-fill" icon="heart-fill" @click="toggleFavorite(post)" v-if="post.you_like_post"/>
+          <b-icon class="icon" icon="heart" @click="toggleFavorite(post)" v-else/>
+          <b-icon class="icon" icon="chat"/>
+          <b-icon class="icon" icon="envelope"/>
+          <b-icon class="icon" icon="bookmark"/>
         </div>
         <b-card-text class="m-2">
-          {{ post.caption }}
+          {{ (post.caption !== 'null') ? post.caption : '' }}
         </b-card-text>
         <template #footer>
           <small class="text-muted">Last updated 3 mins ago</small>
@@ -104,11 +105,12 @@ export default {
               this.publications.filter((item) => item.uuid !== this.post.uuid)
             );
             this.post = {};
-            this.$bvToast.toast("The post has been deleted successfully", {
-              title: "Post deleted",
-              variant: "success",
-              solid: true,
-              auto_hide_delay: 1000,
+            this.$vToastify.success({
+              position: 'top-right',
+              title: 'Deleted',
+              body: 'The post has been deleted successfully',
+              hideProgressbar: true,
+              successDuration: 3000,
             });
           });
         })
@@ -122,11 +124,17 @@ export default {
     },
     getImages(images) {
        return images.split(',')
+    },
+    toggleFavorite(post) {
+      post.you_like_post = !post.you_like_post;
+      const obj = {
+        user_uuid: this.user_uuid,
+        post_uuid: post.uuid,
+        type_like: 'post',
+      }
+      mainServices.like(obj).then(() => {})
     }
-  },
-  created() {
-    console.log(this.publications, "hses");
-  },
+  }
 };
 </script>
 
@@ -136,7 +144,11 @@ export default {
   font-size: 18px;
 }
 .icon:hover {
+  cursor: pointer;
   color: orange;
+}
+.icon-heart-post-fill {
+  color: orange
 }
 .card-body {
   padding: 0%;

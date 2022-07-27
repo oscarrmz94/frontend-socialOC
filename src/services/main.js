@@ -116,5 +116,20 @@ export default {
         }).catch((error) => {
             return error.response
         });   
-    }
+    },
+    like(data) {
+        return axios.post(`${config.api_route}dashboard/posts/like`,
+        data,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });
+    },
 }

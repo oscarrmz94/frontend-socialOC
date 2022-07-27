@@ -63,7 +63,7 @@ export default {
       show_modal: false,
       files_upload: [],
       fill_caption: false,
-      caption: null
+      caption: null,
     }
   },
   created() {
@@ -87,8 +87,6 @@ export default {
     },
     handleMedias(files) {
       this.files_upload = files;
-      console.log(this.files_upload[0])
-
     },
     uploadPost() {
       const data = new FormData()
@@ -99,13 +97,16 @@ export default {
       data.append('user_uuid', this.user.uuid);
       data.append('caption', this.caption);
 
-      mainServices.uploadPost(data).then(() => { 
-        this.$bvToast.toast('The post has been uploaded', {
-          title: 'Post uploaded',
-          variant: 'success',
-          solid: true,
-          auto_hide_delay: 1000
-        });
+      mainServices.uploadPost(data).then((response) => { 
+        this.publications.splice(0, 0, response.new_post)
+            this.$vToastify.success({
+              position: 'top-right',
+              title: 'Uploaded',
+              body: 'The post has been uploaded in feed',
+              hideProgressbar: true,
+              successDuration: 3000,
+            });
+
         this.show_modal = false;
       })
     },
