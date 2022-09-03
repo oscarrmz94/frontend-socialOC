@@ -13,7 +13,7 @@
             </div>
         </div>
 
-        <b-button variant="outline-dark" @click="followAction(user.uuid, index)">
+        <b-button variant="outline-dark" @click="followAction(user.uuid, index)" v-if="user_uuid !== user.uuid">
             <b-spinner :id="`b-spinner${index}`" class="d-none" />
             <div class="d-block" :id="`container-follow-button-${index}`">
               <span :id="`follow-text-${index}`" >{{user.you_follow ? 'Following' : 'Follow'}}</span>

@@ -1,9 +1,8 @@
 <template>
   <div class="col-12 mx-auto my-4 d-flex flex-wrap">
-    <div v-for="(post, index) in posts_user" :key="index" class="col-4">
+    <div v-for="(post, index) in posts_user" :key="index" class="col-4 container-post">
+       <b-img :src="svg_carousel" class="svg-carousel" v-if="isMoreThanOne(post.images).length > 1"/>
        <b-img :src="getOneImage(post.images)" class="img-post-profile col-12 p-1" v-if="!utils.isVideo(post.images)"/>
-       
-
         <VueVideoThumbnail 
         :video-src="getOneImage(post.images)"
         show-play-button
@@ -28,7 +27,8 @@ export default {
   },
   data() {
     return {
-      utils
+      utils,
+      svg_carousel: require('@/assets/styles/carousel.svg')
     };
   },
   props: {
@@ -40,6 +40,9 @@ export default {
   methods: {
     getOneImage(images) {
       return images.split(',')[0]
+    },
+    isMoreThanOne(images) {
+      return images.split(',');
     }
   },
   mounted() {
@@ -57,11 +60,22 @@ export default {
   width: 100%;
   height: 285px;
 }
+.svg-carousel {
+  width: 25px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 100;
+}
+.container-post {
+  position: relative;
+}
 
 @media(max-width: 576px) {
   .img-post-profile {
     height: 150px;
     object-fit: cover;
+    color: #ffffff
   }
 }
 

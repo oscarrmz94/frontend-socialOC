@@ -132,4 +132,18 @@ export default {
             return error.response
         });
     },
+    getTaggedPosts(user_uuid) {
+        return axios.get(`${config.api_route}dashboard/posts/get-posts-tagged/${user_uuid}`,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });
+    },
 }

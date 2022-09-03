@@ -1,12 +1,18 @@
 <template>
   <div class="text-white">
     <b-tabs content-class="main-tabs" align="center" class="col-12">      
-      <b-tab title="Posts">
+      <b-tab title="Posts" active>
         <h3 class="text-center mt-5" v-if="posts_user.length === 0">There is no posts yet</h3>
         <post-component :posts_user="posts_user"/>
       </b-tab>
-      <b-tab title="Videos"><p>I'm the second tab</p></b-tab>
-      <b-tab title="Tagged" ><p>I'm a disabled tab!</p></b-tab>
+      <b-tab title="Videos">
+        <h3 class="text-center mt-5" v-if="posts_user.length === 0">There is no posts yet</h3>
+        <post-component :posts_user="onlyVideos()"/>
+      </b-tab>
+      <b-tab title="Tagged" >
+        <h3 class="text-center mt-5" v-if="tagged_post.length === 0">There is no tagged post</h3>
+        <post-component :posts_user="tagged_post" v-else/>
+      </b-tab>
     </b-tabs>
 
     
@@ -14,8 +20,7 @@
 </template>
 
 <script>
-//import mainServices from '@/services/main'
-import postComponent from './PostProfileComponent.vue'
+import postComponent from './PostProfileComponent.vue';
 
 export default {
   components: {
@@ -25,15 +30,14 @@ export default {
     posts_user: {
       type: Array,
       required: true
+    },
+    tagged_post: {
+      type: Array,
     }
   },
-
-  mounted() {
-  },
-
   methods: {
-    getDataUser() {
-
+    onlyVideos() {
+      return this.posts_user.filter((item) => item.images.includes('mp4'))
     }
   }
 }

@@ -19,8 +19,8 @@
 
             <b-col class="col-12 order-first unordered d-flex justify-content-between my-4">
               <span><strong>{{user.number_post}}</strong> post</span>
-              <span class="span-followers" @click="getFollowers(user.uuid)"><strong>{{user.followers}}</strong> Followers</span>
-              <span class="span-followers" @click="getFollowing(user.uuid)"><strong>{{user.following}}</strong> Following</span>
+              <span class="span-followers" @click="(user.followers > 0) ? getFollowers(user.uuid) : ''"><strong>{{user.followers}}</strong> Followers</span>
+              <span class="span-followers" @click="(user.following > 0) ? getFollowing(user.uuid) : ''"><strong>{{user.following}}</strong> Following</span>
             </b-col>
 
           </b-row>
@@ -36,7 +36,7 @@
 
     <b-row>
       <b-col class="col-12 mt-5 mx-auto">
-        <post-profile :posts_user="posts_user"/>
+        <post-profile :posts_user="posts_user" :tagged_post="tagged_post"/>
       </b-col>
     </b-row>
   </div>
@@ -60,6 +60,7 @@ export default {
       own_user_uuid: '',
       show_modal: false,
       followers: [],
+      tagged_post: []
     }
   },
 
@@ -74,7 +75,15 @@ export default {
       mainServices.getUser(uuid).then((response) => {
         this.user = response.user;
         this.posts_user = response.user.posts
+        this.getTaggedPosts();
       })
+    },
+    getTaggedPosts() {
+
+      mainServices.getTaggedPosts(this.user.uuid).then((response) => {
+        console.log('hey this is my response',response, this.user.uuid)
+        this.tagged_post = response.rows;
+      });
     },
     updateFollowers(data) {
       this.user.following += data
