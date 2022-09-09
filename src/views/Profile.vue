@@ -15,6 +15,19 @@
                 <span class="text-muted d-block col-12">@{{user.nickname}}</span>
               </div>
               <b-button class="ml-2 d-block" v-if="own_user_uuid === user.uuid" @click="$router.push({name: 'EditProfile'})">Edit Profile</b-button>
+              <div variant="outline-light" v-if="own_user_uuid !== user.uuid">
+                <b-button v-if="!user.you_follow" @click="followAction">
+                  <b-spinner v-if="spinner_follow"/>
+                  <div class="d-block">
+                    <span>Follow</span>
+                  </div>
+                </b-button>
+                <b-button v-else @click="unfollowAction">
+                  <div class="d-block">
+                    <span><b-icon class="icon" icon="person-check"/></span>
+                  </div>
+                </b-button>
+              </div>
             </b-col>
 
             <b-col class="col-12 order-first unordered d-flex justify-content-between my-4">
@@ -60,7 +73,8 @@ export default {
       own_user_uuid: '',
       show_modal: false,
       followers: [],
-      tagged_post: []
+      tagged_post: [],
+      spinner_follow: false
     }
   },
 
@@ -71,8 +85,11 @@ export default {
   methods: {
     getDataUser(uuid) {
       this.own_user_uuid = utils.getUserData().uuid;
-
-      mainServices.getUser(uuid).then((response) => {
+      const data = {
+        own_user_uuid: this.own_user_uuid,
+        uuid: uuid
+      }
+      mainServices.getUser(data).then((response) => {
         this.user = response.user;
         this.posts_user = response.user.posts
         this.getTaggedPosts();
@@ -102,6 +119,36 @@ export default {
         this.followers = [];
         this.followers = response.following_list;
       })
+    },
+    followAction() {
+      this.spinner_follow = true;
+      const data = {
+        user_follower_uuid: this.own_user_uuid,
+        user_followed_uuid: this.user.uuid
+      };
+      mainServices.follow(data).then(() => {
+        setTimeout(() => {
+          this.spinner_follow = false;
+        }, 500);
+        this.user.you_follow = true;
+      });
+    },
+    unfollowAction() {
+      this.$dialog
+        .confirm(`Are you sure that You want to unfollow @${this.user.nickname}`)
+        .then(() => {      
+            const data = {
+              user_follower_uuid: this.own_user_uuid,
+              user_followed_uuid: this.user.uuid
+            };
+            this.spinner_follow = true;
+            mainServices.follow(data).then(() => {
+              setTimeout(() => {
+                this.spinner_follow = false;
+              }, 500);
+              this.user.you_follow = false;
+            })
+        });
     }
   },
   watch: {

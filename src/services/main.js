@@ -46,8 +46,9 @@ export default {
             return error.response
         });
     },
-    getUser(uuid) {
-        return axios.get(`${config.api_route}dashboard/user/get-user/${uuid}`,
+    getUser(data) {
+        return axios.post(`${config.api_route}dashboard/user/get-user`,
+        data,
             {
                 headers: {
                     'auth-token': store.state.token,
