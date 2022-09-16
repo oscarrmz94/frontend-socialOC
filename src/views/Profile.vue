@@ -3,7 +3,10 @@
     <b-row class="mb-5">
       <b-col class="col-12 col-lg-8 mx-auto d-flex justify-content-around flex-wrap">
         <b-col class="col-3">
-          <b-avatar class="avatar-profile"></b-avatar>
+          <b-button @click="modal_upload = true" variant="button-light-avatar" class="button-light-avatar" v-if="own_user_uuid === user.uuid">
+            <b-avatar class="avatar-profile cursor-pointer" :src="user.profile_image"></b-avatar>
+          </b-button>
+          <b-avatar class="avatar-profile" :src="user.profile_image" v-else></b-avatar>
         </b-col>
 
         <b-col class="col-7 mb-3">
@@ -43,7 +46,7 @@
       </b-col>
     </b-row>
 
-    <b-modal v-model="show_modal" scrollable size="sm" hide-footer>
+    <b-modal v-model="show_modal" scrollable size="sm" hide-footer hide-header>
       <list-friends-modal :followers="followers" v-on:close_modal="show_modal = false" v-on:update_followers="updateFollowers"/>
     </b-modal>
 
@@ -52,6 +55,32 @@
         <post-profile :posts_user="posts_user" :tagged_post="tagged_post"/>
       </b-col>
     </b-row>
+
+
+    <b-form-file
+      accept=".jpg, .png, .jpeg"
+      v-model="file_profile"
+      placeholder="Choose a file or drop it here..."
+      drop-placeholder="Drop file here..."
+      ref="file_input"
+      class="d-none"
+      @change="uploadProfilePicture()"
+    ></b-form-file>
+
+    <b-modal
+      v-model="modal_upload"
+      centered
+      hide-footer
+      hide-header
+      body-class="modal-actions-body"
+      class="modal-actions"
+      size="sm"
+      content-class="modal-actions-content"
+    >
+      <div class="h5 button-modal first m-0" @click="openFormFile">Upload image</div>
+      <div class="h5 button-modal m-0" v-if="user.profile_image !== null" @click="deleteProfileImage">Remove profile image</div>
+      <div class="h5 button-modal last m-0" @click="modal_upload = !modal_upload">Cancel</div>
+    </b-modal>
   </div>
 </template>
 
@@ -74,7 +103,9 @@ export default {
       show_modal: false,
       followers: [],
       tagged_post: [],
-      spinner_follow: false
+      spinner_follow: false,
+      modal_upload: false,
+      file_profile: null
     }
   },
 
@@ -83,6 +114,32 @@ export default {
   },
 
   methods: {
+    openFormFile() {
+      this.$refs['file_input'].$refs['input'].click();
+    },
+    uploadProfilePicture() {
+      setTimeout(() => {
+        if (this.file_profile !== null) {
+          const form = new FormData();
+          form.append('picture', this.file_profile);
+          form.append('user_uuid', this.user.uuid);
+
+          mainServices.uploadProfilePicture(form).then((response) => {
+            this.modal_upload = false;
+            this.user.profile_image = response.profile_image;
+          });
+        }
+      }, 200);
+    },
+    deleteProfileImage() {
+      const obj = {
+        user_uuid: this.user.uuid,
+      }
+      mainServices.deleteProfilePicture(obj).then((response) => {
+        this.modal_upload = false;
+        this.user.profile_image = response.profile_image;
+      })
+    },
     getDataUser(uuid) {
       this.own_user_uuid = utils.getUserData().uuid;
       const data = {
@@ -98,7 +155,6 @@ export default {
     getTaggedPosts() {
 
       mainServices.getTaggedPosts(this.user.uuid).then((response) => {
-        console.log('hey this is my response',response, this.user.uuid)
         this.tagged_post = response.rows;
       });
     },
@@ -175,5 +231,43 @@ export default {
     width: 5em;
     height: 5em;
   } 
+}
+.modal-actions-body {
+  padding: 0px !important;
+  border-radius: 50px !important;
+}
+.modal-actions-content {
+  background-color: transparent !important;
+}
+.button-light-avatar {
+  border-radius: 100%;
+  padding: 0;
+  border: 0;
+}
+.button-light-avatar:active {
+  outline:none
+}
+.button-light-avatar:focus {
+  outline: none;
+  border: 0;
+}
+.button-modal {
+  text-align: center;
+  background-color: gray;
+  height: auto;
+  color: white;
+  padding: 1em;
+}
+.first {
+  border-top-left-radius: 25px !important;
+  border-top-right-radius: 25px !important;
+}
+.last {
+  border-bottom-left-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+}
+.button-modal:hover {
+  background-color: orange;
+  cursor: pointer;
 }
 </style>

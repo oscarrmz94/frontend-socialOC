@@ -147,4 +147,34 @@ export default {
             return error.response
         });
     },
+    uploadProfilePicture(data) {
+        return axios.post(`${config.api_route}dashboard/user/upload-profile-picture`,
+            data,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });
+    },
+    deleteProfilePicture(data) {
+        return axios.put(`${config.api_route}dashboard/user/delete-profile-picture`,
+            data,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data
+        }).catch((error) => {
+            return error.response
+        });
+    }
 }
