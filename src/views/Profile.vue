@@ -4,9 +4,9 @@
       <b-col class="col-12 col-lg-8 mx-auto d-flex justify-content-around flex-wrap">
         <b-col class="col-3">
           <b-button @click="modal_upload = true" variant="button-light-avatar" class="button-light-avatar" v-if="own_user_uuid === user.uuid">
-            <b-avatar class="avatar-profile cursor-pointer" :src="user.profile_image"></b-avatar>
+            <b-avatar class="avatar-profile cursor-pointer p-1" :src="user.profile_image"></b-avatar>
           </b-button>
-          <b-avatar class="avatar-profile" :src="user.profile_image" v-else></b-avatar>
+          <b-avatar class="avatar-profile p-1" :src="user.profile_image" v-else></b-avatar>
         </b-col>
 
         <b-col class="col-7 mb-3">

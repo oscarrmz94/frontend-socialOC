@@ -41,7 +41,7 @@
           {{ (post.caption !== 'null') ? post.caption : '' }}
         </b-card-text>
         <template #footer>
-          <small class="text-muted">Last updated 3 mins ago</small>
+          <small class="text-muted">{{utils.timePassedFormat(new Date(post.created_at))}}</small>
         </template>
       </b-card>
     </div>

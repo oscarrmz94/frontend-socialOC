@@ -45,6 +45,12 @@ const routes = [
     meta: {need_authentication: true}
   },
   {
+    path: '/d/:uuid',
+    name: 'Detail',
+    component: () => import('../views/profile/DetailPost.vue'),
+    meta: {need_authentication: true}
+  },
+  {
     path: '/account/edit',
     name: 'EditProfile',
     component: () => import('../views/profile/editProfile.vue'),

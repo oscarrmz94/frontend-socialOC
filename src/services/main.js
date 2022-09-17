@@ -176,5 +176,19 @@ export default {
         }).catch((error) => {
             return error.response
         });
-    }
+    },
+    getPost(uuid) {
+        return axios.get(`${config.api_route}dashboard/posts/get-post/${uuid}`,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data.rows[0]
+        }).catch((error) => {
+            return error.response
+        });
+    },
 }

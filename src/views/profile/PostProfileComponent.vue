@@ -1,6 +1,6 @@
 <template>
   <div class="col-12 mx-auto my-4 d-flex flex-wrap">
-    <div v-for="(post, index) in posts_user" :key="index" class="col-4 container-post">
+    <div v-for="(post, index) in posts_user" :key="index" class="col-4 container-post" @click="openDetail(post.uuid)">
        <b-img :src="svg_carousel" class="svg-type-content" v-if="isMoreThanOne(post.images).length > 1"/>
        <b-img :src="svg_video" class="svg-type-content" v-if="utils.isVideo(post.images)"/>
        <b-img :src="getOneImage(post.images)" class="img-post-profile col-12 p-1" v-if="!utils.isVideo(post.images)"/>
@@ -45,6 +45,9 @@ export default {
     },
     isMoreThanOne(images) {
       return images.split(',');
+    },
+    openDetail(post) {
+      this.$emit('openDetail', post);
     }
   },
   mounted() {
@@ -71,6 +74,7 @@ export default {
 }
 .container-post {
   position: relative;
+  cursor: pointer;
 }
 
 @media(max-width: 576px) {
