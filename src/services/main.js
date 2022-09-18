@@ -191,4 +191,33 @@ export default {
             return error.response
         });
     },
+    uploadComment(data) {
+        return axios.post(`${config.api_route}dashboard/posts/comment-post`,
+            data,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data.data;
+        }).catch((error) => {
+            return error.response
+        });
+    },
+    deleteComment(uuid) {
+        return axios.delete(`${config.api_route}dashboard/posts/delete-comment-post/${uuid}`,
+            {
+                headers: {
+                    'auth-token': store.state.token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then((res) => {
+            return res.data;
+        }).catch((error) => {
+            return error.response
+        });
+    },
 }

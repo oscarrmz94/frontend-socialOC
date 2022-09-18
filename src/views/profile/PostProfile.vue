@@ -60,8 +60,8 @@ export default {
       this.show_detail = !this.show_detail; 
       this.change_modal = !this.change_modal;
       mainServices.getPost(uuid).then((response) => {
-        this.post_detail = response;
-        history.pushState({urlPath:''},"",`/d/${uuid}`)      
+          this.post_detail = response;
+          history.pushState({urlPath:''},"",`/d/${uuid}`)
       })
     }
   }

@@ -15,8 +15,8 @@
         <div class="col-6 bg-white d-flex flex-column">
           <div class="d-flex justify-content-between align-items-center p-2 border-bottom h-12">
             <div>
-              <b-avatar :src="post.user_profile_image" class="avatar-detail" size="45"></b-avatar>
-              <span class="ms-2 fw-bold">{{post.user_name}}</span>
+              <b-avatar :src="post.user_profile_image" class="avatar-detail" size="35"></b-avatar>
+              <span class="ms-2 fw-bold f14">{{post.user_name}}</span>
             </div>
             <div>
               <b-icon
@@ -26,16 +26,35 @@
             </div>
           </div>
           <div class="h-55 p-2 border-bottom">
-            <div v-if="post.caption !== 'null'" class="d-flex">
-              <b-avatar :src="post.user_profile_image" class="avatar-detail me-2" size="45"></b-avatar>
+            <div class="d-flex mb-2 f14" v-if="post.caption !== 'null'">
+              <b-avatar :src="post.user_profile_image" class="avatar-detail me-2" size="35"></b-avatar>
               <div>
                 <span class="fw-bold">{{post.user_name}}</span>
                 <span class="ms-2">{{post.caption}}</span>
                 <span class="d-block text-muted">{{utils.timePassedFormat(new Date(post.created_at))}}</span>
               </div>
             </div>
-            <div v-else class="d-flex flex-column justify-content-center h-100">
+            <div v-else-if="!post.comments" class="d-flex flex-column justify-content-center h-100">
                 <h3 class="text-center">There is no comments yet</h3>
+            </div>
+            <div v-if="post.comments" class="d-flex flex-wrap">
+              <div v-for="(comment, index) in post.comments" :key="index" class="mb-2 f14 d-flex">
+                <b-avatar :src="comment.user_profile_image" class="avatar-detail me-2" size="35"></b-avatar>
+                <div>
+                  <span class="fw-bold me-2">{{comment.user_name}}</span>
+                  <span class="">{{comment.comment}}</span>
+                  <div class="d-block text-muted fw-bold">
+                    <span>{{utils.timePassedFormat(new Date(comment.created_at))}}</span>
+                    <span class="ms-2">22 likes</span>
+                    <span class="ms-2">Reply</span>
+                    <b-icon 
+                      class="ms-2" 
+                      icon="three-dots"
+                      @click="openModalActions"
+                    ></b-icon>
+                  </div>    
+                </div>
+              </div>
             </div>
           </div>
           <div class="h-15 border-bottom p-2">
@@ -62,7 +81,7 @@
           <div class="h-15 p-2 d-flex align-items-center">
             <b-icon icon="emoji-smile" class="icon-reactions" @click="open_emojis = !open_emojis" />
             <b-form-input placeholder="Write a comment" class="form-comment" v-model="comment"></b-form-input>
-            <b-button variant="none" class="button-blue">Post</b-button>
+            <b-button variant="none" class="button-blue" @click="uploadComment">Post</b-button>
             <emoji-picker v-if="open_emojis" @emoji_click="emojiClick"></emoji-picker>
           </div>
         </div>
@@ -72,7 +91,8 @@
 
 <script>
 import utils from '../../libs/utils';
-import EmojiPicker from '../../assets/Emoji-Picker/EmojiPicker - Vue.js/EmojiPicker.vue'
+import EmojiPicker from '../../assets/Emoji-Picker/EmojiPicker - Vue.js/EmojiPicker.vue';
+import mainServices from '../../services/main';
 
 export default {
   name: 'DetailPost',
@@ -96,7 +116,9 @@ export default {
       show_modal: this.show,
       utils,
       open_emojis: false,
-      comment: ''
+      comment: '',
+      user_uuid: utils.getUserData().uuid,
+      comment_related_uuid: null,
     }
   },
   created() {
@@ -111,7 +133,18 @@ export default {
     },
     emojiClick(data) {
       this.comment += data;
-      console.log(data)
+    },
+    uploadComment() {
+      const data = {
+        user_uuid: this.user_uuid,
+        post_uuid: this.post.uuid,
+        comment: this.comment,
+        comment_related_uuid: this.comment_related_uuid
+      }
+      mainServices.uploadComment(data).then((response) => {
+        this.post.comments.push(response)
+        
+      });
     }
   }
 }
@@ -158,5 +191,8 @@ export default {
 }
 .button-blue:hover {
   color: rgb(134, 179, 233)
+}
+.f14 {
+  font-size: 14px !important;
 }
 </style>
