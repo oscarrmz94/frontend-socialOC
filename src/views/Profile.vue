@@ -3,7 +3,7 @@
     <b-row class="mb-5">
       <b-col class="col-12 col-lg-8 mx-auto d-flex justify-content-around flex-wrap">
         <b-col class="col-3">
-          <b-button @click="modal_upload = true" variant="button-light-avatar" class="button-light-avatar" v-if="own_user_uuid === user.uuid">
+          <b-button @click="modal_upload = true; changed_modal_upload = !changed_modal_upload" variant="button-light-avatar" class="button-light-avatar" v-if="own_user_uuid === user.uuid">
             <b-avatar class="avatar-profile cursor-pointer p-1" :src="user.profile_image"></b-avatar>
           </b-button>
           <b-avatar class="avatar-profile p-1" :src="user.profile_image" v-else></b-avatar>
@@ -67,20 +67,13 @@
       @change="uploadProfilePicture()"
     ></b-form-file>
 
-    <b-modal
-      v-model="modal_upload"
-      centered
-      hide-footer
-      hide-header
-      body-class="modal-actions-body"
-      class="modal-actions"
-      size="sm"
-      content-class="modal-actions-content"
-    >
-      <div class="h5 button-modal first m-0" @click="openFormFile">Upload image</div>
-      <div class="h5 button-modal m-0" v-if="user.profile_image !== null" @click="deleteProfileImage">Remove profile image</div>
-      <div class="h5 button-modal last m-0" @click="modal_upload = !modal_upload">Cancel</div>
-    </b-modal>
+    <modal :show_modal="modal_upload" :key="changed_modal_upload">
+      <template #body>
+        <div class="h5 button-modal first m-0" @click="openFormFile">Upload image</div>
+        <div class="h5 button-modal m-0" v-if="user.profile_image !== null" @click="deleteProfileImage">Remove profile image</div>
+        <div class="h5 button-modal last m-0" @click="modal_upload = !modal_upload; changed_modal_upload = !changed_modal_upload">Cancel</div>
+      </template>
+    </modal>
   </div>
 </template>
 
@@ -88,12 +81,14 @@
 import mainServices from '@/services/main'
 import postProfile from './profile/PostProfile.vue'
 import ListFriendsModal from './profile/listFriendsModal.vue'
-import utils from '../libs/utils'
+import utils from '../libs/utils';
+import Modal from '@/components/modal/Modal.vue';
 
 export default {
   components: {
     postProfile,
-    ListFriendsModal
+    ListFriendsModal,
+    Modal,
 },
   data() {
     return {
@@ -105,7 +100,8 @@ export default {
       tagged_post: [],
       spinner_follow: false,
       modal_upload: false,
-      file_profile: null
+      file_profile: null,
+      changed_modal_upload: false,
     }
   },
 
@@ -126,6 +122,7 @@ export default {
 
           mainServices.uploadProfilePicture(form).then((response) => {
             this.modal_upload = false;
+            this.changed_modal_upload = !this.changed_modal_upload;
             this.user.profile_image = response.profile_image;
           });
         }
@@ -137,6 +134,7 @@ export default {
       }
       mainServices.deleteProfilePicture(obj).then((response) => {
         this.modal_upload = false;
+        this.changed_modal_upload = !this.changed_modal_upload;
         this.user.profile_image = response.profile_image;
       })
     },

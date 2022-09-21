@@ -46,40 +46,39 @@
       </b-card>
     </div>
 
-    <b-modal
-      v-model="show_actions"
-      centered
-      hide-footer
-      hide-header
-      body-class="modal-actions-body"
-      class="modal-actions"
-      size="sm"
-      content-class="modal-actions-content"
-    >
-      <div class="h5 button-modal first m-0" @click="deletePost()" v-if="user_uuid === post.user_uuid">Delete</div>
-      <div class="h5 button-modal m-0">Unfollow</div>
-      <div class="h5 button-modal m-0">Go to post</div>
-      <div class="h5 button-modal m-0">Share to</div>
-      <div class="h5 button-modal m-0">Copy link</div>
-      <div class="h5 button-modal last m-0">Cancel</div>
-    </b-modal>
+    <modal :show_modal="show_actions" :key="changed_modal_actions">
+      <template #body>
+        <div class="h5 button-modal first m-0" @click="deletePost()" v-if="user_uuid === post.user_uuid">Delete</div>
+        <div :class="`h5 button-modal m-0 ${user_uuid !== post.user_uuid ? 'first' : ''}`">Unfollow</div>
+        <div class="h5 button-modal m-0">Go to post</div>
+        <div class="h5 button-modal m-0">Share to</div>
+        <div class="h5 button-modal m-0">Copy link</div>
+        <div 
+         class="h5 button-modal last m-0"
+         @click="show_actions = false; changed_modal_actions = !changed_modal_actions"
+        >Cancel</div>
+      </template>
+    </modal>
   </div>
 </template>
 
 <script>
 import utils from "@/libs/utils";
 import mainServices from "@/services/main";
-import Slider from '@/views/home/Slider.vue'
+import Slider from '@/views/home/Slider.vue';
+import Modal from '@/components/modal/Modal.vue';
 
 export default {
   components: {
-    Slider
+    Slider,
+    Modal
   },
   data() {
     return {
       utils,
       show_actions: false,
       post: {},
+      changed_modal_actions: false,
     };
   },
   props: {
@@ -95,7 +94,7 @@ export default {
   methods: {
     deletePost() {
       this.show_actions = false;
-
+      this.changed_modal_actions = !this.changed_modal_actions;
       this.$dialog
         .confirm("Are you sure that You want to delete this post ?")
         .then(() => {
@@ -120,6 +119,7 @@ export default {
     },
     show_actions_method(post) {
       this.show_actions = true;
+      this.changed_modal_actions = !this.changed_modal_actions;
       this.post = post;
     },
     getImages(images) {
@@ -182,9 +182,6 @@ export default {
 .button-modal:hover {
   background-color: orange;
   cursor: pointer;
-}
-.first:hover {
-  background: red !important;
 }
 .modal-actions {
   bottom: 10em;

@@ -37,7 +37,9 @@ export default {
     
     time_passed = time_passed - (minutes_c * mins);
     var segs_c = Math.floor(time_passed / segs)
-    if (years_c === 0 && months_c === 0 && days_c === 0 && hours_c === 0 && minutes_c === 0) {
+    if (years_c === 0 && months_c === 0 && days_c === 0 && hours_c === 0 && minutes_c === 0 && segs_c < 5) {
+      return `1 seconds ago`;
+    } else if (years_c === 0 && months_c === 0 && days_c === 0 && hours_c === 0 && minutes_c === 0) {
       return `${segs_c} seconds ago`;
     } else if (years_c === 0 && months_c === 0 && days_c === 0 && hours_c === 0) {
       return `${minutes_c} min ago`;
