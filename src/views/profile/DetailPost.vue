@@ -132,7 +132,7 @@
 
 <script>
 import utils from '../../libs/utils';
-import EmojiPicker from '../../assets/Emoji-Picker/EmojiPicker - Vue.js/EmojiPicker.vue';
+import EmojiPicker from '../../assets/emoji/EmojiPicker.vue';
 import mainServices from '../../services/main';
 import Modal from '../../components/modal/Modal.vue';
 import service from '@/services/main';
