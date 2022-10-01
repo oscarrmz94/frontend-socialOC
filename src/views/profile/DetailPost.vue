@@ -39,21 +39,49 @@
                 <h3 class="text-center">There is no comments yet</h3>
             </div>
             <div v-if="post.comments" class="d-flex flex-wrap container-comments-detail">
-              <div v-for="(comment, index) in post.comments" :key="index" class="mb-2 f14 d-flex">
+              <div v-for="(comment, index) in post.comments" :key="index" class="mb-2 f14 d-flex flex-wrap col-12">
                 <b-avatar :src="comment.user_profile_image" class="avatar-detail me-2" size="35"></b-avatar>
                 <div>
                   <span class="fw-bold me-2">{{comment.user_name}}</span>
                   <span class="">{{comment.comment}}</span>
                   <div class="d-block text-muted fw-bold">
-                    <span>{{utils.timePassedFormat(new Date(comment.created_at))}}</span>
+                    <span>{{utils.timePassedFormat(new Date(comment.created_at), true)}}</span>
                     <span class="ms-2">22 likes</span>
-                    <span class="ms-2">Reply</span>
+                    <span class="ms-2 reply-comment-button" @click="replyComment(comment)">Reply</span>
                     <b-icon 
                       class="ms-2 dots" 
                       icon="three-dots"
-                      @click="openModalActions(false)"
+                      v-if="comment.user_uuid === user_uuid"
+                      @click="openModalActions(false, comment)"
                     ></b-icon>
                   </div>    
+                </div>
+                <div 
+                 class="text-muted col-12 ms-3 reply-comment-button mb-3"
+                 v-if="comment.related_comments"
+                 @click="toggleRelatedComments(index)"
+                > 
+                  ––– See comments ({{comment.related_comments.length}})
+                </div>
+                <div ref="show_related_comments" class="ms-5 d-none">
+                  <div v-for="(comment, index) in comment.related_comments" :key="index" class="mb-2 f14 d-flex col-12">
+                    <b-avatar :src="comment.user_profile_image" class="avatar-detail me-2" size="35"></b-avatar>
+                    <div>
+                      <span class="fw-bold me-2">{{comment.user_name}}</span>
+                      <span class="">{{comment.comment}}</span>
+                      <div class="d-block text-muted fw-bold">
+                        <span>{{utils.timePassedFormat(new Date(comment.created_at), true)}}</span>
+                        <span class="ms-2">22 likes</span>
+                        <span class="ms-2 reply-comment-button" @click="replyComment(comment, true)">Reply</span>
+                        <b-icon 
+                          class="ms-2 dots" 
+                          icon="three-dots"
+                          v-if="comment.user_uuid === user_uuid"
+                          @click="openModalActions(false, comment)"
+                        ></b-icon>
+                      </div>    
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -81,7 +109,7 @@
           </div>
           <div class="h-15 p-2 d-flex align-items-center">
             <b-icon icon="emoji-smile" class="icon-reactions" @click="open_emojis = !open_emojis" />
-            <b-form-input placeholder="Write a comment" class="form-comment" v-model="comment"></b-form-input>
+            <b-form-input placeholder="Write a comment" class="form-comment" v-model="comment" ref="comment_input"></b-form-input>
             <b-button variant="none" class="button-blue" @click="uploadComment">Post</b-button>
             <emoji-picker v-if="open_emojis" @emoji_click="emojiClick"></emoji-picker>
           </div>
@@ -95,7 +123,7 @@
           <div class="h5 button-modal last m-0" @click="show_modal_actions = false; changed_modal_actions = !changed_modal_actions">Cancel</div>
         </template>
         <template #body v-else>
-          <div class="h5 button-modal first m-0">Delete</div>
+          <div class="h5 button-modal first m-0" @click="deleteComment">Delete</div>
           <div class="h5 button-modal last m-0" @click="show_modal_actions = false; changed_modal_actions = !changed_modal_actions">Cancel</div>
         </template>
       </modal>
@@ -107,6 +135,7 @@ import utils from '../../libs/utils';
 import EmojiPicker from '../../assets/Emoji-Picker/EmojiPicker - Vue.js/EmojiPicker.vue';
 import mainServices from '../../services/main';
 import Modal from '../../components/modal/Modal.vue';
+import service from '@/services/main';
 
 export default {
   name: 'DetailPost',
@@ -137,14 +166,18 @@ export default {
       show_modal_actions: false,
       changed_modal_actions: false,
       actions_post: false,
+      comment_data: {},
     }
   },
   created() {
     setTimeout(() => {
-      console.log(this.post, 'he  llo')
+      console.log(this.post.comments, 'he  llo')
     }, 200)
   },
   methods: {
+    toggleRelatedComments(index) {
+      this.$refs.show_related_comments[index].classList.toggle('d-none');
+    },
     changeAction() {
       history.pushState({urlPath:''},"",`/profile/${this.post.user_uuid}`);
       this.$emit('closeModal');   
@@ -160,15 +193,49 @@ export default {
         comment_related_uuid: this.comment_related_uuid
       }
       mainServices.uploadComment(data).then((response) => {
-        this.post.comments.push(response);
+        if (this.comment_related_uuid !== null) {
+          this.post.comments.map((item) => {
+            if (item.uuid === this.comment_related_uuid) {
+              if (item.related_comments) item.related_comments.push(response)
+              else item.related_comments = [response]
+            } 
+          })
+          this.comment_related_uuid = false;
+        } else {
+          this.post.comments.push(response);
+        }
         this.comment = '';
+        this.open_emojis = false;
       });
     },
-    openModalActions(is_actions_post) {
+    openModalActions(is_actions_post, comment) {
+      this.comment_data = comment;
       if (is_actions_post) this.actions_post = true;
       this.show_modal_actions = true;
       this.changed_modal_actions = !this.changed_modal_actions;
-    }
+    },
+    deleteComment() {
+      service.deleteComment(this.comment_data.uuid).then(() => {
+        this.show_modal_actions = false;
+        this.changed_modal_actions = !this.changed_modal_actions;
+        if (this.comment_data.comment_related_uuid) {
+          this.post.comments.map((item) => {
+            if (item.uuid === this.comment_data.comment_related_uuid) {
+              item.related_comments = item.related_comments.filter((item) => item.uuid !== this.comment_data.uuid);
+            }
+          });
+        } else {
+          this.post.comments = this.post.comments.filter((item) => item.uuid !== this.comment_data.uuid);
+        }
+        this.comment_data = {};
+      });
+    },
+    replyComment(comment, related = false) {
+      console.log(comment)
+      this.comment = `@${comment.user_nickname} `;
+      this.comment_related_uuid = related ? comment.comment_related_uuid : comment.uuid;
+      this.$refs.comment_input.focus();
+    },
   }
 }
 </script>
@@ -240,6 +307,9 @@ export default {
 }
 .button-modal:hover {
   background-color: orange;
+  cursor: pointer;
+}
+.reply-comment-button {
   cursor: pointer;
 }
 </style>
