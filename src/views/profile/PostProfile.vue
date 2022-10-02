@@ -61,8 +61,12 @@ export default {
       this.change_modal = !this.change_modal;
       mainServices.getPost(uuid).then((response) => {
           this.post_detail = response;
+          this.post_detail.images = this.getImages(this.post_detail.images);
           history.pushState({urlPath:''},"",`/d/${uuid}`)
       })
+    },
+    getImages(images) {
+      return images.split(',');
     }
   }
 }

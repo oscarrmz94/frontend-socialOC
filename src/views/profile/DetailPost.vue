@@ -10,7 +10,7 @@
     >
       <div class="d-flex">
         <div class="col-6">
-          <b-img :src="post.images" class="w-100 heigth-detail"></b-img>
+          <slider :data="post.images" :post_uuid="post.uuid"></slider>
         </div>
         <div class="col-6 bg-white d-flex flex-column">
           <div class="d-flex justify-content-between align-items-center p-2 border-bottom h-12">
@@ -42,7 +42,9 @@
               <div v-for="(comment, index) in post.comments" :key="index" class="mb-2 f14 d-flex flex-wrap col-12">
                 <b-avatar :src="comment.user_profile_image" class="avatar-detail me-2" size="35"></b-avatar>
                 <div>
-                  <span class="fw-bold me-2">{{comment.user_name}}</span>
+                  <span class="fw-bold me-2 username-redirection" @click="$router.push({name: 'Profile', params: {uuid: comment.user_uuid}}); show_modal = false">
+                    {{comment.user_name}}
+                  </span>
                   <span class="">{{comment.comment}}</span>
                   <div class="d-block text-muted fw-bold">
                     <span>{{utils.timePassedFormat(new Date(comment.created_at), true)}}</span>
@@ -67,7 +69,7 @@
                   <div v-for="(comment, index) in comment.related_comments" :key="index" class="mb-2 f14 d-flex col-12">
                     <b-avatar :src="comment.user_profile_image" class="avatar-detail me-2" size="35"></b-avatar>
                     <div>
-                      <span class="fw-bold me-2">{{comment.user_name}}</span>
+                      <span class="fw-bold me-2 username-redirection" @click="$router.push({name: 'Profile', params: {uuid: comment.user_uuid}}); show_modal = false">{{comment.user_name}}</span>
                       <span class="">{{comment.comment}}</span>
                       <div class="d-block text-muted fw-bold">
                         <span>{{utils.timePassedFormat(new Date(comment.created_at), true)}}</span>
@@ -136,12 +138,14 @@ import EmojiPicker from '../../assets/emoji/EmojiPicker.vue';
 import mainServices from '../../services/main';
 import Modal from '../../components/modal/Modal.vue';
 import service from '@/services/main';
+import Slider from '@/views/home/Slider.vue';
 
 export default {
   name: 'DetailPost',
   components: {
     EmojiPicker,
-    Modal
+    Modal,
+    Slider,
   },
   props: {
     show: {
@@ -171,7 +175,7 @@ export default {
   },
   created() {
     setTimeout(() => {
-      console.log(this.post.comments, 'he  llo')
+      console.log(this.post, 'he  llo')
     }, 200)
   },
   methods: {
@@ -202,7 +206,7 @@ export default {
           })
           this.comment_related_uuid = false;
         } else {
-          this.post.comments.push(response);
+          this.post.comments ? this.post.comments.push(response) : this.post.comments = [response];
         }
         this.comment = '';
         this.open_emojis = false;
@@ -231,7 +235,6 @@ export default {
       });
     },
     replyComment(comment, related = false) {
-      console.log(comment)
       this.comment = `@${comment.user_nickname} `;
       this.comment_related_uuid = related ? comment.comment_related_uuid : comment.uuid;
       this.$refs.comment_input.focus();
@@ -241,6 +244,9 @@ export default {
 </script>
 
 <style>
+.modal-actions-content .modal-body{
+  padding: 0;
+}
 .dots {
   cursor: pointer;
 }
@@ -250,10 +256,6 @@ export default {
 .avatar-detail {
   padding: 0.15em;
   background-color: #ccc;
-}
-.heigth-detail {
-  height: 550px;
-  object-fit: cover;
 }
 .h-15 {
   height: 15%;
@@ -310,6 +312,10 @@ export default {
   cursor: pointer;
 }
 .reply-comment-button {
+  cursor: pointer;
+}
+.username-redirection:hover {
+  text-decoration: underline;
   cursor: pointer;
 }
 </style>
