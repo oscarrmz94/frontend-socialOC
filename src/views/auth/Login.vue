@@ -106,7 +106,6 @@ export default {
           if (response.error === null) {
             this.settingToken(response.data.token);
             service_auth.dashboard().then((user_data) => {
-              console.log(user_data)
               localStorage.setItem('user_data', JSON.stringify(user_data))
               this.$router.push({name: 'Home'});
               this.$vToastify.success({
@@ -146,7 +145,10 @@ export default {
 }
 .card-login {
   top: -3em;
-  height: 360px;
+  height: 380px;
   min-width: 23rem;
+}
+.card-login .card-body {
+  padding: 1em;
 }
 </style>

@@ -20,7 +20,7 @@ export default {
         user,
         {headers: { 'Content-Type': 'application/json'}}
         ).then((res) => {
-            return res.data
+            return res;
         }).catch((error) => {
             return error.response
         });
