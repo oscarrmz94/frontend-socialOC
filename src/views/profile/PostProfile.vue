@@ -30,6 +30,7 @@
 import postComponent from './PostProfileComponent.vue';
 import DetailPost from  './DetailPost.vue';
 import mainServices from '../../services/main';
+import utils from '@/libs/utils';
 
 export default {
   components: {
@@ -40,7 +41,8 @@ export default {
     return {
       show_detail: false,
       change_modal: false,
-      post_detail: {}
+      post_detail: {},
+      utils,
     }
   },
   props: {
@@ -59,7 +61,7 @@ export default {
     openDetail(uuid) {
       this.show_detail = !this.show_detail; 
       this.change_modal = !this.change_modal;
-      mainServices.getPost(uuid).then((response) => {
+      mainServices.getPost(uuid, utils.getUserData().uuid).then((response) => {
           this.post_detail = response;
           this.post_detail.images = this.getImages(this.post_detail.images);
           history.pushState({urlPath:''},"",`/d/${uuid}`)

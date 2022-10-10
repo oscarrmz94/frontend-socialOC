@@ -91,12 +91,13 @@
           <div class="h-15 border-bottom p-2">
             <div class="d-flex justify-content-between  ">
               <div>
-                <b-icon icon="heart" class="icon-reactions"></b-icon>
-                <b-icon icon="chat" class="icon-reactions"></b-icon>
-                <b-icon icon="cursor" class="icon-reactions text-muted"></b-icon>
+                <b-icon class="icon icon-heart-post-fill icon-reaction" icon="heart-fill" @click="toggleFavorite(post)" v-if="post.you_like_post"/>
+                <b-icon class="icon" icon="heart" @click="toggleFavorite(post)" v-else/>
+                <b-icon icon="chat" class="icon" @click="$refs.comment_input.focus()"></b-icon>
+                <b-icon icon="cursor" class="icon no-cursor-pointer"></b-icon>
               </div>
               <div>
-                <b-icon icon="bookmark" class="icon-reactions"></b-icon>
+                <b-icon icon="bookmark" class="icon no-cursor-pointer"></b-icon>
               </div>
             </div>
             <div class="mt-1 d-flex">
@@ -176,7 +177,7 @@ export default {
   created() {
     setTimeout(() => {
       console.log(this.post, 'he  llo')
-    }, 200)
+    }, 1400)
   },
   methods: {
     toggleRelatedComments(index) {
@@ -239,11 +240,31 @@ export default {
       this.comment_related_uuid = related ? comment.comment_related_uuid : comment.uuid;
       this.$refs.comment_input.focus();
     },
+    toggleFavorite(post) {
+      post.you_like_post = !post.you_like_post;
+      const obj = {
+        user_uuid: this.user_uuid,
+        post_uuid: post.uuid,
+        type_like: 'post',
+      }
+      mainServices.like(obj).then(() => {})
+    }
   }
 }
 </script>
 
 <style>
+.icon:hover {
+  cursor: pointer;
+  color: orange;
+}
+.icon {
+  margin: 5px;
+  font-size: 18px;
+}
+.icon-heart-post-fill {
+  color: orange
+}
 .modal-actions-content .modal-body{
   padding: 0;
 }
@@ -278,6 +299,8 @@ export default {
 }
 .form-comment{
   border: none;
+  margin: 0 0 0 0.4em;
+  padding: 0.4em 0 0.4em 0.2em;
 }
 .form-comment:focus, .form-comment:active {
   outline: transparent !important;
@@ -317,5 +340,9 @@ export default {
 .username-redirection:hover {
   text-decoration: underline;
   cursor: pointer;
+}
+.no-cursor-pointer {
+  color: #ccc !important;
+  cursor: auto !important;
 }
 </style>

@@ -177,8 +177,8 @@ export default {
             return error.response
         });
     },
-    getPost(uuid) {
-        return axios.get(`${config.api_route}dashboard/posts/get-post/${uuid}`,
+    getPost(uuid, own_user_uuid) {
+        return axios.get(`${config.api_route}dashboard/posts/get-post/${uuid}/${own_user_uuid}`,
             {
                 headers: {
                     'auth-token': store.state.token,

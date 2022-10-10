@@ -20,7 +20,7 @@
               id="input-1"
               v-model="form.name"
               placeholder="Enter Name"
-              :state="state_name"
+              :state="form.name.length > 0 ? state_name : null"
             ></b-form-input>
           </b-form-group>
           <b-form-group 
@@ -32,7 +32,7 @@
               id="input-2"
               v-model="form.lastname"
               placeholder="Enter Lastname"
-              :state="state_lastname"
+              :state="form.lastname.length > 0 ? state_lastname : null"
             ></b-form-input>
           </b-form-group>
 
@@ -45,7 +45,7 @@
               id="example-datepicker" 
               v-model="form.date_birth" 
               class="mb-2"
-              :state="state_birth"
+              :state="form.date_birth !== '' ? state_birth : null"
             >
             </b-form-datepicker>
           </b-form-group>
@@ -60,7 +60,7 @@
               id="input-4"
               v-model="form.nickname"
               placeholder="Enter Nickname"
-              :state="state_nickname"
+              :state="form.nickname.length > 0 ? state_nickname : null"
             ></b-form-input>
           </b-form-group>
 
@@ -75,7 +75,7 @@
               v-model="form.gender"
               placeholder="Enter name"
               :options="gender"
-              :state="state_gender"
+              :state="form.gender === null ? null : state_gender"
             ></b-form-select>
           </b-form-group>
           
@@ -89,7 +89,7 @@
               id="input-6"
               v-model="form.email"
               placeholder="Enter Email"
-              :state="state_email"
+              :state="form.email.length > 0 ? state_email : null"
             >
             </b-form-input>
             <span class="text-danger alert-error-register" v-if="mail_already_exists">This email is already in 
@@ -108,7 +108,7 @@
               v-model="form.password"
               placeholder="Enter Password"
               type="password"
-              :state="state_password"
+              :state="form.password.length > 0 ? state_password : null"
             ></b-form-input>
             <span class="text-danger alert-error-register" v-if="strong_password_label">It is not a strong password</span>
           </b-form-group>

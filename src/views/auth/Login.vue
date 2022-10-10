@@ -14,8 +14,7 @@
                 id="input-group-1" 
                 label-for="input-1"
                 valid-feedback="Valid email"
-                :invalid-feedback="invalidEmail"
-                :state="state_email"
+                :invalid-feedback="user.email.length > 0 ? invalidEmail : ''"
                 >
                 <b-icon v-if="user.email.length >= 8"  class="icon" icon="envelope" animation="throb" variant="warning"/>
                 <b-icon v-else class="icon" icon="envelope" variant="warning"/>
@@ -24,7 +23,7 @@
                 id="input-2"
                 v-model="user.email"
                 placeholder="Email"
-                :state="state_email"
+                :state="user.email.length > 0 ? state_email : null"
               ></b-form-input>
             </b-form-group>
           </div>
@@ -32,8 +31,6 @@
           <b-form-group
             id="input-group-2" 
             label-for="input-2"
-            :state="state_Password"
-            :invalid-feedback="invalidPassword"
           >
             <b-icon v-if="user.password.length >= 8" class="icon" icon="lock" animation="throb" variant="warning"/>
             <b-icon v-else class="icon" icon="lock" variant="warning"/>
@@ -43,7 +40,7 @@
               type="password"
               v-model="user.password"
               placeholder="Password"
-              :state="state_Password"
+              @keyup.enter="onSubmit"
             ></b-form-input>
           </b-form-group>
           <button type="submit" class="btn btn-outline-warning m-2">Sign In</button>
@@ -67,31 +64,29 @@ import { mapActions } from 'vuex';
 import utils from '@/libs/utils';
 
 export default {
-    computed: {
-      state_email() {
-        return utils.isEmail(this.user.email) === false
-      },
-      invalidEmail() {
-        if (utils.isEmail(this.user.email)) {
-          return 'Is not a correct email'
-        }
-        return 'This field is obligatory.'
-      },
-      state_Password() {
-        return this.user.password.length >=8
-      },
-      invalidPassword() {
-        if (this.user.password.length > 0) {
-          return 'Write at least 4 characteres.'
-        }
-        return 'This field is obligatory.'
-      }
+  computed: {
+    state_email() {
+      return utils.isEmail(this.user.email) === false
     },
+    invalidEmail() {
+      if (utils.isEmail(this.user.email)) {
+        return 'It is not a correct email'
+      }
+      return 'This field is obligatory.'
+    },
+    state_password() {
+      return this.user.password.length >= 8;
+    }
+  },
   data() {
     return {
+      // user: {
+      //   email: 'chino@chino.com',
+      //   password: 'Pass2018#'
+      // }
       user: {
-        email: 'chino@chino.com',
-        password: 'Pass2018#'
+        email: '',
+        password: ''
       }
     }
   },
@@ -101,7 +96,7 @@ export default {
 
     onSubmit(event) {
       event.preventDefault();
-      if (this.state_email && this.state_Password) {
+      if (this.state_email && this.state_password) {
         service_auth.login(this.user).then((response) => {
           if (response.error === null) {
             this.settingToken(response.data.token);
