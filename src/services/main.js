@@ -199,7 +199,6 @@ export default {
         }
       }
     ).then((res) => {
-      console.log('la res', res)
       return res.data.rows[0]
     }).catch((error) => {
       return error.response
