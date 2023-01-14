@@ -19,6 +19,7 @@
      :show="show_detail" 
      :key="change_modal" 
      :post="post_detail"
+     :is_modal="true"
      @closeModal="show_detail = false; post_detail = {}"
     >
     </detail-post>
@@ -61,7 +62,7 @@ export default {
     openDetail(uuid) {
       this.show_detail = !this.show_detail; 
       this.change_modal = !this.change_modal;
-      mainServices.getPost(uuid, utils.getUserData().uuid).then((response) => {
+      mainServices.getPost(uuid).then((response) => {
           this.post_detail = response;
           this.post_detail.images = this.getImages(this.post_detail.images);
           history.pushState({urlPath:''},"",`/d/${uuid}`)

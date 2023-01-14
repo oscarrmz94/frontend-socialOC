@@ -46,9 +46,12 @@
       </b-col>
     </b-row>
 
-    <b-modal v-model="show_modal" scrollable size="sm" hide-footer hide-header>
-      <list-friends-modal :followers="followers" v-on:close_modal="show_modal = false" v-on:update_followers="updateFollowers"/>
-    </b-modal>
+    <list-friends-modal 
+      :followers="followers"
+      :open_modal="open_modal_followers"
+      @update_followers="updateFollowers"
+      :key="update_modal"
+    />
 
     <b-row>
       <b-col class="col-12 mt-5 mx-auto">
@@ -80,9 +83,9 @@
 <script>
 import mainServices from '@/services/main'
 import postProfile from './profile/PostProfile.vue'
-import ListFriendsModal from './profile/listFriendsModal.vue'
-import utils from '../libs/utils';
+import ListFriendsModal from '@/components/modal/listFriendsModal.vue'
 import Modal from '@/components/modal/Modal.vue';
+import utils from '@/libs/utils';
 
 export default {
   components: {
@@ -94,14 +97,15 @@ export default {
     return {
       user: {},
       posts_user: [],
-      own_user_uuid: '',
-      show_modal: false,
+      own_user_uuid: utils.getUserData().uuid,
+      open_modal_followers: false,
       followers: [],
       tagged_post: [],
       spinner_follow: false,
       modal_upload: false,
       file_profile: null,
       changed_modal_upload: false,
+      update_modal: false
     }
   },
 
@@ -118,7 +122,6 @@ export default {
         if (this.file_profile !== null) {
           const form = new FormData();
           form.append('picture', this.file_profile);
-          form.append('user_uuid', this.user.uuid);
 
           mainServices.uploadProfilePicture(form).then((response) => {
             this.modal_upload = false;
@@ -129,22 +132,14 @@ export default {
       }, 200);
     },
     deleteProfileImage() {
-      const obj = {
-        user_uuid: this.user.uuid,
-      }
-      mainServices.deleteProfilePicture(obj).then((response) => {
+      mainServices.deleteProfilePicture().then((response) => {
         this.modal_upload = false;
         this.changed_modal_upload = !this.changed_modal_upload;
         this.user.profile_image = response.profile_image;
       })
     },
     getDataUser(uuid) {
-      this.own_user_uuid = utils.getUserData().uuid;
-      const data = {
-        own_user_uuid: this.own_user_uuid,
-        uuid: uuid
-      }
-      mainServices.getUser(data).then((response) => {
+      mainServices.getUser(uuid).then((response) => {
         this.user = response.user;
         this.posts_user = response.user.posts
         this.getTaggedPosts();
@@ -158,26 +153,26 @@ export default {
     },
     updateFollowers(data) {
       this.user.following += data
-      console.log(data)
     },
     getFollowers(uuid) {
-      this.show_modal = true;
+      this.open_modal_followers = true;
       mainServices.getFollowersList(uuid).then((response) => {
         this.followers = [];
         this.followers = response.followers_list;
-      })
+      });
+      this.update_modal = !this.update_modal;
     },
     getFollowing(uuid) {
-      this.show_modal = true;
+      this.open_modal_followers = true;
       mainServices.getFollowingList(uuid).then((response) => {
         this.followers = [];
         this.followers = response.following_list;
-      })
+      });
+      this.update_modal = !this.update_modal;
     },
     followAction() {
       this.spinner_follow = true;
       const data = {
-        user_follower_uuid: this.own_user_uuid,
         user_followed_uuid: this.user.uuid
       };
       mainServices.follow(data).then(() => {
@@ -192,7 +187,6 @@ export default {
         .confirm(`Are you sure that You want to unfollow @${this.user.nickname}`)
         .then(() => {      
             const data = {
-              user_follower_uuid: this.own_user_uuid,
               user_followed_uuid: this.user.uuid
             };
             this.spinner_follow = true;

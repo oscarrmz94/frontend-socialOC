@@ -80,14 +80,14 @@ export default {
   },
   data() {
     return {
-      // user: {
-      //   email: 'chino@chino.com',
-      //   password: 'Pass2018#'
-      // }
       user: {
-        email: '',
-        password: ''
+        email: 'chino@chino.com',
+        password: 'Pass2018#'
       }
+      // user: {
+      //   email: '',
+      //   password: ''
+      // }
     }
   },
   

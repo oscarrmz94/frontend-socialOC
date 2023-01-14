@@ -1,26 +1,24 @@
 <template>
-    <div>
-      <div class="d-flex justify-content-between mb-4" v-for="(user, index) in followers" :key="index">
-        <div class="d-flex">
-            <b-avatar class="b-avatar-list-followers me-2" size="lg" v-if="user.profile_img === null" />
-            <b-avatar :src="user.profile_img" class="b-avatar-list me-2" size="lg" v-else />
-
-            <div>
-            <a class="text-decoration-none router-link-followers d-block" @click="redirect(user.uuid)">
-                <span class="d-block">{{ user.name }}</span>
-            </a>
-            <span class="d-block text-muted">@{{ user.nickname }}</span>
-            </div>
+  <b-modal v-model="show" scrollable size="sm" hide-footer hide-heade centered>
+    <div class="d-flex justify-content-between mb-4" v-for="(user, index) in followers" :key="index">
+      <div class="d-flex">
+        <b-avatar :src="user.profile_image" class="b-avatar-list me-2" size="lg" icon="person-fill" />
+        <div>
+        <a class="text-decoration-none router-link-followers d-block" @click="redirect(user.uuid)">
+            <span class="d-block">{{ user.name }}</span>
+        </a>
+        <span class="d-block text-muted">@{{ user.nickname }}</span>
         </div>
-
-        <b-button variant="outline-dark" @click="followAction(user.uuid, index)" v-if="user_uuid !== user.uuid">
-            <b-spinner :id="`b-spinner${index}`" class="d-none" />
-            <div class="d-block" :id="`container-follow-button-${index}`">
-              <span :id="`follow-text-${index}`" >{{user.you_follow ? 'Following' : 'Follow'}}</span>
-            </div>
-        </b-button>
       </div>
+
+      <b-button variant="outline-dark" @click="followAction(user.uuid, index)" v-if="user_uuid !== user.uuid">
+        <b-spinner :id="`b-spinner${index}`" class="d-none" />
+        <div class="d-block" :id="`container-follow-button-${index}`">
+          <span :id="`follow-text-${index}`" >{{user.you_follow ? 'Following' : 'Follow'}}</span>
+        </div>
+      </b-button>
     </div>
+  </b-modal>
 </template>
 
 <script>
@@ -32,7 +30,8 @@ export default {
     return {
       toggle_follow: [],
       user_uuid: '',
-      utils
+      utils,
+      show: this.open_modal,
     }
   },
   props: {
@@ -40,9 +39,14 @@ export default {
       type: Array,
       required: true
     },
+    open_modal: {
+      type: Boolean,
+      required: true,
+    }
     // NEED A TOGGLE TEXT, FOLLOW OR UNFOLLOW
   },
   created() {
+    console.log(this.followers, 'fff')
     this.user_uuid = utils.getUserData().uuid;
     setTimeout(() => {
       this.fillToggle();

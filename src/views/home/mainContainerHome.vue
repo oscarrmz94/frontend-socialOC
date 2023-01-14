@@ -1,8 +1,8 @@
 <template>
   <div>
     <b-row>
-      <b-col class="col-12 col-md-8">
-        <b-button class="mb-5 ms-5" variant="success" @click="showModal()">
+      <b-col class="col-12 col-md-8 col-lg-7 px-3">
+        <b-button class="mb-5" variant="success" @click="showModal()">
           <b-icon icon="plus" />
           Upload post
         </b-button>
@@ -11,7 +11,7 @@
       </b-col>
 
       <b-col class="col-12 order-first order-md-last col-md-4">
-        <list-friends :not_following="not_following" :user_uuid="user.uuid"/>
+        <list-friends :not_following="not_following"/>
       </b-col>
     </b-row>
 
@@ -31,14 +31,22 @@
           placeholder="Write a caption ..."
           rows="3"
           max-rows="6"
+          :disabled="(!skeleton_loading) ? false : true"
         ></b-form-textarea>
           <b-button variant="success" class="float-end mt-4" v-if="files_upload.length >= 1" @click="uploadPost()">
-          Share
-          <b-icon icon="arrow-bar-up" />
+            <div v-if="!skeleton_loading">
+              Share
+              <b-icon icon="arrow-bar-up" />
+            </div>
+            <div v-else>
+              <b-spinner class="spinner-upload-post"></b-spinner>
+              Uploading
+            </div>
         </b-button>
       </div>
-
     </b-modal>
+
+    <b-skeleton animation="wave" width="100%" class="skeleton-loading" v-if="skeleton_loading"></b-skeleton>
   </div>
 </template>
 
@@ -53,7 +61,7 @@ export default {
   components: {
     listFriends,
     posts,
-    UploadMedias
+    UploadMedias,
   },
   data() {
     return {
@@ -64,6 +72,7 @@ export default {
       files_upload: [],
       fill_caption: false,
       caption: null,
+      skeleton_loading: false,
     }
   },
   created() {
@@ -71,13 +80,12 @@ export default {
   },
   methods: {
     getMainData() {
-      this.user = utils.getUserData();    
-
-      mainServices.getFollowersPosts(this.user.uuid).then((response) => {
+      this.user = utils.getUserData(); 
+      mainServices.getFollowersPosts().then((response) => {
         this.publications = response.new_rows;
       });
 
-      mainServices.getNotFollowing(this.user.uuid).then((response) => {
+      mainServices.getNotFollowing().then((response) => {
         this.not_following = response.not_following;
       });
     },
@@ -89,6 +97,7 @@ export default {
       this.files_upload = files;
     },
     uploadPost() {
+      this.skeleton_loading = true;
       const data = new FormData()
 
       this.files_upload.forEach((item) => {
@@ -96,8 +105,7 @@ export default {
       })
       data.append('user_uuid', this.user.uuid);
       data.append('caption', this.caption);
-
-      mainServices.uploadPost(data).then((response) => { 
+      mainServices.uploadPost(data).then((response) => {
         this.publications.splice(0, 0, response.new_post)
             this.$vToastify.success({
               position: 'top-right',
@@ -106,7 +114,7 @@ export default {
               hideProgressbar: true,
               successDuration: 3000,
             });
-
+        this.skeleton_loading = false;
         this.show_modal = false;
       })
     },
@@ -116,3 +124,16 @@ export default {
   }
 };
 </script>
+<style>
+.skeleton-loading {
+  background-color: #444;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin-bottom: 0;
+}
+.spinner-upload-post {
+  height: 20px;
+  width: 20px;
+}
+</style>

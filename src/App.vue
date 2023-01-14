@@ -44,7 +44,6 @@ export default {
     }
   },
   created() {
-    console.log('He entrado a mi app')
     this.getData();
   }
 }
@@ -52,7 +51,7 @@ export default {
 
 <style>
 .body{
-  background-color: #2c2a2a;
+  background-color: #363333;
   width: 100vw;
 }
 .main-container {

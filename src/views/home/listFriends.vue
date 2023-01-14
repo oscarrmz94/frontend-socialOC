@@ -39,10 +39,6 @@ export default {
       type: Array,
       required: true
     },
-    user_uuid: {
-      type: String,
-      required: true
-    }
   },
 
   created() {
@@ -57,7 +53,6 @@ export default {
       container_follow.classList.replace('d-block', 'd-none');
       spinner.classList.replace('d-none', 'd-block');
       const data = {
-        user_follower_uuid: this.user_uuid,
         user_followed_uuid: followed_uuid
       }
       mainServices.follow(data).then(() => {

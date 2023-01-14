@@ -1,13 +1,11 @@
 <template>
-  <div class="col-12 col-md-10 col-lg-8 mx-auto">
-
+  <div class="col-12 mx-auto">
     <div v-for="(post, index) in publications" :key="index">
       <b-card
-        border-variant="warning"
         :img-alt="`Image-${post.caption}`"
-        class="card-body bg-dark text-white mb-5"
+        class="card-body text-white mb-5"
       >
-        <div class="d-flex justify-content-between align-items-center p-2">
+        <div class="d-flex justify-content-between align-items-center p-3">
           <div>
             <b-avatar
               class="b-avatar-list me-2"
@@ -29,20 +27,22 @@
           </div>
         </div>
         <Slider :data="getImages(post.images)" :post_uuid="post.uuid"/>
+        <div class="p-2">
+          <div class="d-flex">
+            <b-icon class="icon icon-heart-post-fill" icon="heart-fill" @click="toggleFavorite(post)" v-if="post.like_post.like_post"/>
+            <b-icon class="icon" icon="heart" @click="toggleFavorite(post)" v-else/>
+            <b-icon class="icon" icon="chat"/>
+            <b-icon class="icon" icon="envelope"/>
+            <b-icon class="icon" icon="bookmark"/>
+          </div>
 
-        <div class="d-flex">
-          <b-icon class="icon icon-heart-post-fill" icon="heart-fill" @click="toggleFavorite(post)" v-if="post.you_like_post"/>
-          <b-icon class="icon" icon="heart" @click="toggleFavorite(post)" v-else/>
-          <b-icon class="icon" icon="chat"/>
-          <b-icon class="icon" icon="envelope"/>
-          <b-icon class="icon" icon="bookmark"/>
+          <b-card-text class="m-2">
+            {{ (post.caption !== 'null') ? post.caption : '' }}
+          </b-card-text>
+          <div>
+            <small class="text-white">{{utils.timePassedFormat(new Date(post.created_at))}}</small>
+          </div>
         </div>
-        <b-card-text class="m-2">
-          {{ (post.caption !== 'null') ? post.caption : '' }}
-        </b-card-text>
-        <template #footer>
-          <small class="text-muted">{{utils.timePassedFormat(new Date(post.created_at))}}</small>
-        </template>
       </b-card>
     </div>
 
@@ -98,7 +98,7 @@ export default {
       this.$dialog
         .confirm("Are you sure that You want to delete this post ?")
         .then(() => {
-          mainServices.deletePost(this.post.uuid).then(() => {
+          mainServices.deletePost(this.post.uuid, this.user_uuid).then(() => {
             this.$emit(
               "update_publications",
               this.publications.filter((item) => item.uuid !== this.post.uuid)
@@ -126,13 +126,16 @@ export default {
        return images.split(',')
     },
     toggleFavorite(post) {
-      post.you_like_post = !post.you_like_post;
+      post.like_post.like_post = !post.like_post.like_post;
       const obj = {
-        user_uuid: this.user_uuid,
+        uuid: post.like_post.uuid,
         post_uuid: post.uuid,
         type_like: 'post',
       }
-      mainServices.like(obj).then(() => {})
+      mainServices.likePost(obj).then((response) => {
+        if (response.like) post.like_post.uuid = response.like.uuid;
+        else post.like_post.uuid = null;
+      })
     }
   }
 };
@@ -152,6 +155,9 @@ export default {
 }
 .card-body {
   padding: 0%;
+  background-color: #444;
+  border-radius: 1em;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;;
 }
 .video-main-post {
   width: 100%;
