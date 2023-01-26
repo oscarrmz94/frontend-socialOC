@@ -29,7 +29,7 @@
         <Slider :data="getImages(post.images)" :post_uuid="post.uuid"/>
         <div class="p-2">
           <div class="d-flex">
-            <b-icon class="icon icon-heart-post-fill" icon="heart-fill" @click="toggleFavorite(post)" v-if="post.like_post.like_post"/>
+            <b-icon class="icon icon-heart-post-fill" icon="heart-fill" @click="toggleFavorite(post)" v-if="post.like_post"/>
             <b-icon class="icon" icon="heart" @click="toggleFavorite(post)" v-else/>
             <b-icon class="icon" icon="chat"/>
             <b-icon class="icon" icon="envelope"/>

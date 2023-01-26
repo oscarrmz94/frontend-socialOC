@@ -14,7 +14,7 @@
             <b-icon
               icon="three-dots-vertical"
               class="dots"
-              @click="openModalActions(true)"
+              @click="modal_actions_post = true; update_modal_actions_post = !update_modal_actions_post"
             />
           </div>
         </div>
@@ -133,20 +133,43 @@
       :open_modal="open_modal_users_likes"
       :key="update_modal_users_likes"
     />
-    <modal :show_modal="show_modal_actions" :key="changed_modal_actions" @change="actions_post = false">
+    <!-- <modal :show_modal="show_modal_actions" :key="changed_modal_actions" @change="actions_post = false">
       <template #body v-if="actions_post">
         <div v-if="user_uuid === post.user_uuid">
           <div class="h5 button-modal first m-0">Delete</div>
           <div class="h5 button-modal m-0" >Edit</div>
         </div>
-        <div class="h5 button-modal m-0" >Go to post</div>
-        <div class="h5 button-modal last m-0" @click="show_modal_actions = false; changed_modal_actions = !changed_modal_actions">Cancel</div>
+        <div
+          :class="`h5 button-modal m-0 ${user_uuid !== post.user_uuid ? 'first' : ''}`" 
+          @click="$router.push({name: 'Detail', params: {uuid: post.uuid}})"
+          v-if="is_modal"
+        >
+          Go to post
+        </div>
+        <div
+          class="h5 button-modal last m-0" 
+          @click="show_modal_actions = false; changed_modal_actions = !changed_modal_actions"
+        >
+          Cancel
+        </div>
       </template>
       <template #body v-else>
         <div class="h5 button-modal first m-0" @click="deleteComment">Delete</div>
         <div class="h5 button-modal last m-0" @click="show_modal_actions = false; changed_modal_actions = !changed_modal_actions">Cancel</div>
       </template>
-    </modal>
+    </modal> -->
+
+    <modal-actions-detail
+      v-if="modal_actions_post"
+      @close_modal_actions_post="modal_actions_post = false"
+      @delete_post="deletePost"
+      :actions_model="{go_post: (is_modal), cancel: true, delete_post: (user_uuid === post.user_uuid), edit_post: (user_uuid === post.user_uuid)}"
+      :post="post"
+      :open_modal="modal_actions_post"
+      :key="update_modal_actions_post"
+      :is_modal="is_modal"
+    >
+    </modal-actions-detail>
   </div>
 </template>
 
@@ -156,8 +179,8 @@ import Slider from "@/views/home/Slider.vue";
 import utils from "@/libs/utils";
 import service from "@/services/main";
 import listFriendsModal from '@/components/modal/listFriendsModal.vue';
-import Modal from "@/components/modal/Modal.vue";
-
+// import Modal from "@/components/modal/Modal.vue";
+import modalActionsDetail from '@/components/modal/modalActionsDetail.vue';
 
 export default {
   name: 'detailView',
@@ -165,17 +188,19 @@ export default {
     Slider,
     EmojiPicker,
     listFriendsModal,
-    Modal
+    // Modal,
+    modalActionsDetail
   },
   props: {
     post: {
       type: Object,
-      default: () => {
-        return {};
-      },
     },
+    is_modal: {
+      type: Boolean,
+    }
   },
   created() {
+    console.log(this.post, 'in detail view')
   },
   data() {
     return {
@@ -192,9 +217,15 @@ export default {
       update_modal_users_likes: 0,
       open_emojis: false,
       user_uuid: utils.getUserData().uuid,
+      modal_actions_post: false,
+      update_modal_actions_post: false,
+      
     }
   },
   methods: {
+    deletePost(post_uuid) {
+      this.$emit('delete_post', post_uuid);
+    },
     toggleFavorite(post, comment, type_like = 'post') {
 
       if (type_like === 'post') {

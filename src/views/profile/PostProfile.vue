@@ -21,6 +21,7 @@
      :post="post_detail"
      :is_modal="true"
      @closeModal="show_detail = false; post_detail = {}"
+     @delete_posts="deletePost"
     >
     </detail-post>
     
@@ -44,10 +45,11 @@ export default {
       change_modal: false,
       post_detail: {},
       utils,
+      posts_user: this.posts_user_dad,
     }
   },
   props: {
-    posts_user: {
+    posts_user_dad: {
       type: Array,
       required: true
     },
@@ -56,6 +58,9 @@ export default {
     }
   },
   methods: {
+    deletePost(post_uuid) {
+      this.posts_user = this.posts_user.filter((item) => item.uuid !== post_uuid);
+    },
     onlyVideos() {
       return this.posts_user.filter((item) => item.images.includes('mp4'))
     },
@@ -63,9 +68,9 @@ export default {
       this.show_detail = !this.show_detail; 
       this.change_modal = !this.change_modal;
       mainServices.getPost(uuid).then((response) => {
-          this.post_detail = response;
-          this.post_detail.images = this.getImages(this.post_detail.images);
-          history.pushState({urlPath:''},"",`/d/${uuid}`)
+        this.post_detail = response;
+        this.post_detail.images = this.getImages(this.post_detail.images);
+        history.pushState({urlPath:''},"",`/d/${uuid}`)
       })
     },
     getImages(images) {

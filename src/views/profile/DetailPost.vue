@@ -10,9 +10,9 @@
       content-class="modal-actions-content"
       @change="changeAction"
     >
-      <detail-view :post="post"/>
+      <detail-view :post="post" :is_modal="is_modal" @delete_post="deletePost"/>
     </b-modal>
-    <detail-view :post="post_detail" v-if="!is_modal"/>
+    <detail-view :post="post_detail" v-if="!is_modal && loaded" :is_modal="is_modal"/>
   </div>
 </template>
 
@@ -38,9 +38,6 @@ export default {
     },
     post: {
       type: Object,
-      default: () => {
-        return {};
-      },
     },
   },
   data() {
@@ -48,25 +45,29 @@ export default {
       show_modal: this.show,
       loading: true,
       post_detail: null,
+      loaded: false
     };
   },
   created() {
     setTimeout(() => {
       if (!this.is_modal) this.getPostData(this.$route.params.uuid)
-
       this.loading = false;
     }, 800);
   },
   methods: {
+    deletePost(post_uuid) {
+      this.show_modal = false;
+      this.$emit('delete_posts', post_uuid);
+    },
     changeAction() {
       history.pushState({ urlPath: "" }, "", `/profile/${this.post.user_uuid}`);
       this.$emit("closeModal");
     },
     getPostData(uuid) {
       service.getPost(uuid).then((response) => {
-        console.log(response)
         this.post_detail = response;
         this.post_detail.images = this.getImages(this.post_detail.images);
+        this.loaded = true;
       });
     },
     getImages(images) {
@@ -143,25 +144,6 @@ export default {
 }
 .f14 {
   font-size: 14px !important;
-}
-.first {
-  border-top-left-radius: 25px !important;
-  border-top-right-radius: 25px !important;
-}
-.last {
-  border-bottom-left-radius: 25px !important;
-  border-bottom-right-radius: 25px !important;
-}
-.button-modal {
-  text-align: center;
-  background-color: gray;
-  height: auto;
-  color: white;
-  padding: 1em;
-}
-.button-modal:hover {
-  background-color: orange;
-  cursor: pointer;
 }
 .reply-comment-button {
   color: rgb(190, 190, 190);

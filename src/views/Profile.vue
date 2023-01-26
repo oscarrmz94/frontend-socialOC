@@ -55,7 +55,7 @@
 
     <b-row>
       <b-col class="col-12 mt-5 mx-auto">
-        <post-profile :posts_user="posts_user" :tagged_post="tagged_post"/>
+        <post-profile :posts_user_dad="posts_user" :tagged_post="tagged_post"/>
       </b-col>
     </b-row>
 
@@ -105,7 +105,7 @@ export default {
       modal_upload: false,
       file_profile: null,
       changed_modal_upload: false,
-      update_modal: false
+      update_modal: 1
     }
   },
 
@@ -160,7 +160,7 @@ export default {
         this.followers = [];
         this.followers = response.followers_list;
       });
-      this.update_modal = !this.update_modal;
+      this.update_modal += 1;
     },
     getFollowing(uuid) {
       this.open_modal_followers = true;
@@ -168,7 +168,7 @@ export default {
         this.followers = [];
         this.followers = response.following_list;
       });
-      this.update_modal = !this.update_modal;
+      this.update_modal += 1;
     },
     followAction() {
       this.spinner_follow = true;
@@ -242,24 +242,5 @@ export default {
 .button-light-avatar:focus {
   outline: none;
   border: 0;
-}
-.button-modal {
-  text-align: center;
-  background-color: gray;
-  height: auto;
-  color: white;
-  padding: 1em;
-}
-.first {
-  border-top-left-radius: 25px !important;
-  border-top-right-radius: 25px !important;
-}
-.last {
-  border-bottom-left-radius: 25px !important;
-  border-bottom-right-radius: 25px !important;
-}
-.button-modal:hover {
-  background-color: orange;
-  cursor: pointer;
 }
 </style>

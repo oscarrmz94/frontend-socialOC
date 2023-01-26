@@ -17,8 +17,13 @@
 
     <b-modal title="Upload Post" v-model="show_modal" centered hide-footer>
       <div v-if="!fill_caption">
-        <UploadMedias @changed="handleMedias" :acceptVideo="true"> </UploadMedias>
-        <b-button variant="success" class="float-end mt-4" v-if="files_upload.length >= 1" @click="fill_caption = true">
+        <UploadMedias @changed="handleMedias" :acceptVideo="true" @keyup.enter="fill_caption = true"> </UploadMedias>
+        <b-button 
+          variant="success" 
+          class="float-end mt-4" 
+          v-if="files_upload.length >= 1" 
+          @click="fill_caption = true"
+        >
           Next
           <b-icon icon="arrow-right-short" />
         </b-button>
@@ -32,8 +37,14 @@
           rows="3"
           max-rows="6"
           :disabled="(!skeleton_loading) ? false : true"
+          @keyup.enter="uploadPost()"
         ></b-form-textarea>
-          <b-button variant="success" class="float-end mt-4" v-if="files_upload.length >= 1" @click="uploadPost()">
+          <b-button 
+            variant="success" 
+            class="float-end mt-4" 
+            v-if="files_upload.length >= 1" 
+            @click="uploadPost()"
+          >
             <div v-if="!skeleton_loading">
               Share
               <b-icon icon="arrow-bar-up" />
@@ -107,13 +118,14 @@ export default {
       data.append('caption', this.caption);
       mainServices.uploadPost(data).then((response) => {
         this.publications.splice(0, 0, response.new_post)
-            this.$vToastify.success({
-              position: 'top-right',
-              title: 'Uploaded',
-              body: 'The post has been uploaded in feed',
-              hideProgressbar: true,
-              successDuration: 3000,
-            });
+        this.$vToastify.success({
+          position: 'top-right',
+          title: 'Uploaded',
+          body: 'The post has been uploaded in feed',
+          hideProgressbar: true,
+          successDuration: 3000,
+        });
+        this.caption = null;
         this.skeleton_loading = false;
         this.show_modal = false;
       })

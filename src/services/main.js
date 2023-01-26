@@ -103,8 +103,8 @@ export default {
       return error.response
     });
   },
-  deletePost(post_uuid, user_uuid) {
-    return axios.delete(`${config.api_route}dashboard/posts/delete-post/${post_uuid}/${user_uuid}`,
+  deletePost(post_uuid) {
+    return axios.delete(`${config.api_route}dashboard/posts/delete-post/${post_uuid}`,
       {
         headers: {
           'auth-token': store.state.token,
