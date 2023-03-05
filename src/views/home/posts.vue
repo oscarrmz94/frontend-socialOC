@@ -31,8 +31,7 @@
           <div class="d-flex">
             <b-icon class="icon icon-heart-post-fill" icon="heart-fill" @click="toggleFavorite(post)" v-if="post.like_post"/>
             <b-icon class="icon" icon="heart" @click="toggleFavorite(post)" v-else/>
-            <b-icon class="icon" icon="chat"/>
-            <b-icon class="icon" icon="envelope"/>
+            <b-icon class="icon" icon="chat" @click="showModalDetail(post)"/>
             <b-icon class="icon" icon="bookmark"/>
           </div>
 
@@ -59,6 +58,17 @@
         >Cancel</div>
       </template>
     </modal>
+
+    <b-modal 
+      v-model="show_modal"
+      size="lg" 
+      centered 
+      hide-header 
+      hide-footer       
+      content-class="modal-actions-content"
+    >
+      <detail-view :post="post_selected" :is_modal="true" @delete_post="deletePost" :focus_on_input="true"/>
+    </b-modal>
   </div>
 </template>
 
@@ -67,11 +77,13 @@ import utils from "@/libs/utils";
 import mainServices from "@/services/main";
 import Slider from '@/views/home/Slider.vue';
 import Modal from '@/components/modal/Modal.vue';
+import detailView from '@/components/detail/detailView.vue';
 
 export default {
   components: {
     Slider,
-    Modal
+    Modal,
+    detailView
   },
   data() {
     return {
@@ -79,6 +91,8 @@ export default {
       show_actions: false,
       post: {},
       changed_modal_actions: false,
+      show_modal: false,
+      post_selected: {}
     };
   },
   props: {
@@ -92,6 +106,11 @@ export default {
     }
   },
   methods: {
+    showModalDetail(post) {
+      this.show_modal = true; 
+      this.post_selected = {...post};
+      this.post_selected.images = this.post_selected.images.split(',');
+    },
     deletePost() {
       this.show_actions = false;
       this.changed_modal_actions = !this.changed_modal_actions;

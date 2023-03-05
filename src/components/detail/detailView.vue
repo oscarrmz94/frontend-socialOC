@@ -197,10 +197,16 @@ export default {
     },
     is_modal: {
       type: Boolean,
+    },
+    focus_on_input: {
+      type: Boolean,
+      default: false,
     }
   },
   created() {
-    console.log(this.post, 'in detail view')
+    setTimeout(() => {
+      if (this.focus_on_input) this.$refs.comment_input.focus()
+    }, 200)
   },
   data() {
     return {

@@ -177,7 +177,7 @@ export default {
     });
   },
   deleteProfilePicture() {
-    return axios.put(`${config.api_route}dashboard/user/delete-profile-picture`,
+    return axios.delete(`${config.api_route}dashboard/user/delete-profile-picture`,
       {
         headers: {
           'auth-token': store.state.token,

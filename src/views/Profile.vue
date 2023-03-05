@@ -2,7 +2,8 @@
   <div class="text-white">
     <b-row class="mb-5">
       <b-col class="col-12 col-lg-8 mx-auto d-flex justify-content-around flex-wrap">
-        <b-col class="col-3">
+        <b-col class="col-3 position-relative">
+          <b-spinner class="spinner-loading-profile-image" v-if="loading_profile_picture"></b-spinner>
           <b-button @click="modal_upload = true; changed_modal_upload = !changed_modal_upload" variant="button-light-avatar" class="button-light-avatar" v-if="own_user_uuid === user.uuid">
             <b-avatar class="avatar-profile cursor-pointer p-1" :src="user.profile_image"></b-avatar>
           </b-button>
@@ -55,7 +56,7 @@
 
     <b-row>
       <b-col class="col-12 mt-5 mx-auto">
-        <post-profile :posts_user_dad="posts_user" :tagged_post="tagged_post"/>
+        <post-profile :posts_user_dad="posts_user" :tagged_post="tagged_post" v-if="loaded"/>
       </b-col>
     </b-row>
 
@@ -105,7 +106,9 @@ export default {
       modal_upload: false,
       file_profile: null,
       changed_modal_upload: false,
-      update_modal: 1
+      update_modal: 1,
+      loaded: false,
+      loading_profile_picture: false,
     }
   },
 
@@ -118,15 +121,16 @@ export default {
       this.$refs['file_input'].$refs['input'].click();
     },
     uploadProfilePicture() {
+      this.loading_profile_picture = true;
+      this.modal_upload = false;
+      this.changed_modal_upload = !this.changed_modal_upload;
       setTimeout(() => {
         if (this.file_profile !== null) {
           const form = new FormData();
           form.append('picture', this.file_profile);
-
           mainServices.uploadProfilePicture(form).then((response) => {
-            this.modal_upload = false;
-            this.changed_modal_upload = !this.changed_modal_upload;
             this.user.profile_image = response.profile_image;
+            this.loading_profile_picture = false;
           });
         }
       }, 200);
@@ -141,7 +145,8 @@ export default {
     getDataUser(uuid) {
       mainServices.getUser(uuid).then((response) => {
         this.user = response.user;
-        this.posts_user = response.user.posts
+        this.posts_user = response.user.posts;
+        this.loaded = true;
         this.getTaggedPosts();
       })
     },
@@ -208,6 +213,15 @@ export default {
 </script>
 
 <style>
+.spinner-loading-profile-image {
+  height: 65px;
+  width: 65px;
+  color: white;
+  position: absolute;
+  z-index: 100;
+  top: 3em;
+  left: 3em;
+}
 .avatar-profile {
     background-color: #444;
     width: 10em;
