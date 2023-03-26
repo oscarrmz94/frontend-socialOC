@@ -37,8 +37,8 @@
                 <span class="fw-bold me-2 username-redirection" @click="$router.push({name: 'Profile', params: {uuid: comment.user_uuid}}); show_modal = false">
                   {{comment.user_name}}
                 </span>
-                <span v-if="!is_editing_comment">{{comment.comment}}</span>
-                <div v-else class="d-flex align-items-center justify-content-between w-100">
+                <span :ref="`comment-${comment.uuid}`">{{comment.comment}}</span>
+                <div class="d-none align-items-center justify-content-between w-100" :ref="`edit-comment-${comment.uuid}`">
                   <b-form-input v-model="comment.comment" :ref="`comment_input_edit_${comment.uuid}`" class="mr-1" @keyup.enter="editComment(comment)"></b-form-input>
                   <span class="text-info cursor-pointer" @click="editComment(comment)">Edit</span>
                 </div>
@@ -260,7 +260,6 @@ export default {
       open_modal_comment: false,
       update_modal_comment: 0.2,
       is_editing_post: false,
-      is_editing_comment: false,
     }
   },
   methods: {
@@ -301,13 +300,18 @@ export default {
         uuid: comment.uuid,
         comment: comment.comment
       };
-      service.editComment(comment_edited).then(() => {
-        // WS EDIT COMMENT
-
+      service.editComment(comment_edited).then((response) => {
+        if (response.comment) {
+          this.$refs[`comment-${response.comment.uuid}`][0].classList.remove('d-none');
+          this.$refs[`edit-comment-${response.comment.uuid}`][0].classList.toggle('d-none');
+          this.$refs[`edit-comment-${response.comment.uuid}`][0].classList.remove('d-flex');
+        }
       });
     },
     commentAction(comment_uuid) {
-      this.is_editing_comment = true;
+      this.$refs[`comment-${comment_uuid}`][0].classList.add('d-none');
+      this.$refs[`edit-comment-${comment_uuid}`][0].classList.toggle('d-none');
+      this.$refs[`edit-comment-${comment_uuid}`][0].classList.add('d-flex');
       setTimeout(() => {
         this.$refs[`comment_input_edit_${comment_uuid}`][0].focus();
       }, 200);
