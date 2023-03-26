@@ -10,25 +10,20 @@
     centered
   > 
     <div ref="modal_actions_detail">
-      <div class="button-modal delete-hover" v-if="actions_model.delete_post" @click="deletePost()">Delete</div>
-      <div class="button-modal" v-if="actions_model.edit_post" @click="$emit('edit_action'); show = false">Edit</div>
-      <div class="button-modal" v-if="actions_model.go_post"
-        @click="$router.push({name: 'Detail', params: {uuid: post.uuid}})"
-      >
-        Go to post
-      </div>
-       <div class="button-modal" v-if="actions_model.cancel" @click="show = false">
+      <div class="button-modal delete-hover" v-if="actions_model.delete_comment" @click="deleteComment()">Delete</div>
+      <div class="button-modal" v-if="actions_model.edit_comment" @click="$emit('comment_edit', comment.uuid); show = false">Edit</div>
+      <div class="button-modal disabled-button" disabled>Report this comment</div>
+       <div class="button-modal" @click="show = false">
         Cancel
       </div>
     </div>
   </b-modal>
 </template>
-
 <script>
 import main_services from '@/services/main';
 
 export default {
-  name: 'modalActionsDetail',
+  name: 'modalCommentEdit',
   data() {
     return {
       show: this.open_modal
@@ -41,15 +36,12 @@ export default {
         return {}
       }
     },
-    post: {
+    comment: {
       type: Object
     },
     open_modal: {
       type: Boolean,
     },
-    is_modal: {
-      type: Boolean,
-    }
   },
   created() {
     setTimeout(() => {
@@ -58,19 +50,11 @@ export default {
     }, 200)
   },
   methods: {
-    deletePost() {
-      this.$dialog.confirm(`Are you sure that You want to delete this post?`).then(() => {      
-        main_services.deletePost(this.post.uuid).then(() => {
+    deleteComment() {
+      this.$dialog.confirm(`Are you sure that You want to delete this comment?`).then(() => {
+        main_services.deleteComment(this.comment.uuid).then(() => {
+          this.$emit('delete_comment', this.comment.uuid);
           this.show = false;
-          if (!this.is_modal) this.$router.push({name: 'Profile', params: {uuid: this.post.user_uuid}});
-          else this.$emit('delete_post', this.post.uuid);
-          this.$vToastify.success({
-            position: 'top-right',
-            title: 'Deleted',
-            body: 'The post has been deleted successfully',
-            hideProgressbar: true,
-            successDuration: 3000,
-          });
         });
       });
     }
@@ -78,7 +62,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.disabled-button {
+  cursor: not-allowed !important;
+}
 .modal-actions-body {
   padding: 0px !important;
   border-radius: 50px !important;
