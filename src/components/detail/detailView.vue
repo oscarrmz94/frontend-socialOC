@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="d-flex">
+    <div class="d-flex position-relative">
       <div class="col-6">
         <slider :data="post.images" :post_uuid="post.uuid"></slider>
       </div>
-      <div class="col-6 bg-white d-flex flex-column">
+      <div class="col-6 bg-white d-flex flex-column" v-if="!is_editing_post">
         <div class="d-flex justify-content-between align-items-center p-2 border-bottom h-12">
           <div>
             <b-avatar :src="post.user_profile_image" class="avatar-detail" size="35"></b-avatar>
@@ -37,7 +37,11 @@
                 <span class="fw-bold me-2 username-redirection" @click="$router.push({name: 'Profile', params: {uuid: comment.user_uuid}}); show_modal = false">
                   {{comment.user_name}}
                 </span>
-                <span class="">{{comment.comment}}</span>
+                <span v-if="!is_editing_comment">{{comment.comment}}</span>
+                <div v-else class="d-flex align-items-center justify-content-between w-100">
+                  <b-form-input v-model="comment.comment" :ref="`comment_input_edit_${comment.uuid}`" class="mr-1" @keyup.enter="editComment(comment)"></b-form-input>
+                  <span class="text-info cursor-pointer" @click="editComment(comment)">Edit</span>
+                </div>
                 <div class="d-block text-muted fw-bold">
                   <span>{{utils.timePassedFormat(new Date(comment.created_at), true)}}</span>
                   <span 
@@ -54,7 +58,7 @@
                     class="ms-2 dots" 
                     icon="three-dots"
                     v-if="(comment.user_uuid === user_uuid) || post.user_uuid === user_uuid"
-                    @click="openModalActions(false, comment)"
+                    @click="openModalActionsComment(comment)"
                   ></b-icon>
                 </div>    
               </div>
@@ -122,9 +126,29 @@
         </div>
         <div class="h-15 p-2 d-flex align-items-center">
           <b-icon icon="emoji-smile" class="icon-reactions" @click="open_emojis = !open_emojis" />
-          <b-form-input placeholder="Write a comment" class="form-comment" v-model="comment" ref="comment_input"></b-form-input>
+          <b-form-input placeholder="Write a comment" class="form-comment" v-model="comment" ref="comment_input" @keyup.enter="uploadComment"></b-form-input>
           <b-button variant="none" class="button-blue" @click="uploadComment">Post</b-button>
           <emoji-picker v-if="open_emojis" @emoji_click="emojiClick"></emoji-picker>
+        </div>
+      </div>
+      <div class="col-6 bg-white d-flex flex-column" v-else>
+        <div class="edit-post-title border-bottom">
+          <p class="m-0 cursor-pointer" @click="is_editing_post = false">Cancel</p>
+          <p class="h6">Edit Post</p>
+          <p class="text-info m-0 cursor-pointer" @click="editPost">Done</p>
+        </div>
+        <div class="d-flex flex-wrap justify-content-between align-items-center p-2 mt-3 border-bottom h-12">
+          <div class="w-100 mb-3">
+            <b-avatar :src="post.user_profile_image" class="avatar-detail" size="35"></b-avatar>
+            <span class="ms-2 fw-bold f14">{{post.user_name}}</span>
+          </div>
+          <div class="my-2 w-100">
+            <b-form-textarea v-model="post.caption" rows="6" class="d-block w-100" ref="textarea_edit" @keyup.enter="editPost"></b-form-textarea>
+          </div>
+          <div class="border-top w-100">
+            <h6 class="mt-2 text-muted">Tagged persons</h6>
+            <p class="text-muted">Coming soon ...</p>
+          </div>
         </div>
       </div>
     </div>
@@ -158,6 +182,14 @@
         <div class="h5 button-modal last m-0" @click="show_modal_actions = false; changed_modal_actions = !changed_modal_actions">Cancel</div>
       </template>
     </modal> -->
+    <modal-comment-edit 
+      :open_modal="open_modal_comment"
+      :key="update_modal_comment"
+      :comment="comment_data"
+      :actions_model="{delete_comment: (user_uuid === post.user_uuid || user_uuid === comment_data.user_uuid), edit_comment: (user_uuid === comment_data.user_uuid)}"
+      @delete_comment="deleteComment"
+      @comment_edit="commentAction"
+    />
 
     <modal-actions-detail
       v-if="modal_actions_post"
@@ -168,6 +200,7 @@
       :open_modal="modal_actions_post"
       :key="update_modal_actions_post"
       :is_modal="is_modal"
+      @edit_action="editAction"
     >
     </modal-actions-detail>
   </div>
@@ -179,8 +212,8 @@ import Slider from "@/views/home/Slider.vue";
 import utils from "@/libs/utils";
 import service from "@/services/main";
 import listFriendsModal from '@/components/modal/listFriendsModal.vue';
-// import Modal from "@/components/modal/Modal.vue";
 import modalActionsDetail from '@/components/modal/modalActionsDetail.vue';
+import ModalCommentEdit from '@/components/modal/modalCommentEdit.vue';
 
 export default {
   name: 'detailView',
@@ -188,8 +221,8 @@ export default {
     Slider,
     EmojiPicker,
     listFriendsModal,
-    // Modal,
-    modalActionsDetail
+    modalActionsDetail,
+    ModalCommentEdit
   },
   props: {
     post: {
@@ -201,7 +234,7 @@ export default {
     focus_on_input: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   created() {
     setTimeout(() => {
@@ -217,7 +250,6 @@ export default {
       actions_post: false,
       show_modal: false,
       changed_modal_actions: false,
-      show_modal_actions: false,
       users_to_modal: [],
       open_modal_users_likes: false,
       update_modal_users_likes: 0,
@@ -225,12 +257,64 @@ export default {
       user_uuid: utils.getUserData().uuid,
       modal_actions_post: false,
       update_modal_actions_post: false,
-      
+      open_modal_comment: false,
+      update_modal_comment: 0.2,
+      is_editing_post: false,
+      is_editing_comment: false,
     }
   },
   methods: {
+    editPost() {
+      const edited_post = {
+        uuid: this.post.uuid,
+        caption: this.post.caption
+      }
+      service.editPost(edited_post).then((response) => {
+        if (response.post_updated) {
+          this.is_editing_post = false;
+          this.$vToastify.success({
+            position: 'top-right',
+            title: 'Updated',
+            body: 'The post has been updated successfully',
+            hideProgressbar: true,
+            successDuration: 3000,
+          });
+        } else {
+          this.$vToastify.success({
+            position: 'top-right',
+            title: 'Error',
+            body: 'Something wrong has been happened',
+            hideProgressbar: true,
+            successDuration: 3000,
+          });
+        }
+      });
+    },
+    editAction() {
+      this.is_editing_post = true;
+      setTimeout(() => {
+        this.$refs.textarea_edit.focus();
+      }, 200);
+    },
+    editComment(comment) {
+      const comment_edited = {
+        uuid: comment.uuid,
+        comment: comment.comment
+      };
+      service.editComment(comment_edited).then(() => {
+        // WS EDIT COMMENT
+
+      });
+    },
+    commentAction(comment_uuid) {
+      this.is_editing_comment = true;
+      setTimeout(() => {
+        this.$refs[`comment_input_edit_${comment_uuid}`][0].focus();
+      }, 200);
+    },
     deletePost(post_uuid) {
       this.$emit('delete_post', post_uuid);
+      history.pushState({ urlPath: "" }, "", `/profile/${this.post.user_uuid}`);
     },
     toggleFavorite(post, comment, type_like = 'post') {
 
@@ -257,17 +341,16 @@ export default {
         });
       }
     },
-    openModalActions(is_actions_post, comment) {
+    openModalActionsComment(comment) {
+      this.open_modal_comment = true;
+      this.update_modal_comment += 1;
       this.comment_data = comment;
-      if (is_actions_post) this.actions_post = true;
-      this.show_modal_actions = true;
-      this.changed_modal_actions = !this.changed_modal_actions;
     },
     getUsersLikesMethod(uuid, type) {
       service.getUsersLikes(uuid, type).then((response) => {
         this.users_to_modal = response;
         this.open_modal_users_likes = true;
-        this.update_modal_users_likes += 1;
+        this.update_modal_users_likes += 0.1;
       });
     },
     uploadComment() {
@@ -286,33 +369,18 @@ export default {
           });
           this.comment_related_uuid = false;
         } else {
-          this.post.comments
-            ? this.post.comments.push(response)
-            : (this.post.comments = [response]);
+          setTimeout(() => {
+            this.post.comments
+              ? this.post.comments.push(response)
+              : (this.post.comments = [response]);
+          }, 500);
         }
         this.comment = "";
         this.open_emojis = false;
       });
     },
-    deleteComment() {
-      service.deleteComment(this.comment_data.uuid).then(() => {
-        this.show_modal_actions = false;
-        this.changed_modal_actions = !this.changed_modal_actions;
-        if (this.comment_data.comment_related_uuid) {
-          this.post.comments.map((item) => {
-            if (item.uuid === this.comment_data.comment_related_uuid) {
-              item.related_comments = item.related_comments.filter(
-                (item) => item.uuid !== this.comment_data.uuid
-              );
-            }
-          });
-        } else {
-          this.post.comments = this.post.comments.filter(
-            (item) => item.uuid !== this.comment_data.uuid
-          );
-        }
-        this.comment_data = {};
-      });
+    deleteComment(comment_uuid) {
+      this.post.comments = this.post.comments.filter((comment) => comment.uuid !== comment_uuid);
     },
     replyComment(comment, related = false) {
       this.comment = `@${comment.user_nickname} `;
@@ -328,6 +396,22 @@ export default {
 }
 </script>
 
+<style scoped>
+.edit-post-title {
+  position: absolute;
+  top: -2.5em;
+  left: 0;
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+  padding: 0.7em;
+  background-color: white;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+</style>
 <style>
-
+.form-control {
+  border: none !important;
+}
 </style>
